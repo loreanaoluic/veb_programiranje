@@ -6,5 +6,4 @@ import beans.Karta;
 
 public class KartaDAO {
 	private HashMap<String, Karta> mapaKarata;
-
 }

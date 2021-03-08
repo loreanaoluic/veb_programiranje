@@ -6,4 +6,5 @@ import beans.Komentar;
 
 public class KomentarDAO {
 	public HashMap<Integer, Komentar> mapaKomentara;
+	
 }
