@@ -1,6 +1,7 @@
 package beans;
 
 public class Komentar {
+	private int id;
 	private Kupac kupac;
 	private Manifestacija manifestacija;
 	private String tekstKomentara;
@@ -10,12 +11,21 @@ public class Komentar {
 		super();
 	}
 
-	public Komentar(Kupac kupac, Manifestacija manifestacija, String tekstKomentara, double ocena) {
+	public Komentar(int id, Kupac kupac, Manifestacija manifestacija, String tekstKomentara, double ocena) {
 		super();
+		this.id = id;
 		this.kupac = kupac;
 		this.manifestacija = manifestacija;
 		this.tekstKomentara = tekstKomentara;
 		this.ocena = ocena;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Kupac getKupac() {
@@ -52,8 +62,8 @@ public class Komentar {
 
 	@Override
 	public String toString() {
-		return "Komentar [kupac=" + kupac + ", manifestacija=" + manifestacija + ", tekstKomentara=" + tekstKomentara
-				+ ", ocena=" + ocena + "]";
+		return "Komentar [id=" + id + ", kupac=" + kupac + ", manifestacija=" + manifestacija + ", tekstKomentara="
+				+ tekstKomentara + ", ocena=" + ocena + "]";
 	}
 	
 }

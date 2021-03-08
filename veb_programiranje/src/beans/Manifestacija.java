@@ -7,6 +7,7 @@ import beans.enums.StatusManifestacije;
 import beans.enums.TipManifestacije;
 
 public class Manifestacija {
+	private int id;
 	private String naziv;
 	private TipManifestacije tipManifestacije;
 	private int brojMesta;
@@ -20,10 +21,11 @@ public class Manifestacija {
 		super();
 	}
 
-	public Manifestacija(String naziv, TipManifestacije tipManifestacije, int brojMesta,
+	public Manifestacija(int id, String naziv, TipManifestacije tipManifestacije, int brojMesta,
 			LocalDateTime datumIVremeOdrzavanja, double cenaRegularKarte, StatusManifestacije status,
 			Lokacija lokacija, BufferedImage posterManifestacije) {
 		super();
+		this.id = id;
 		this.naziv = naziv;
 		this.tipManifestacije = tipManifestacije;
 		this.brojMesta = brojMesta;
@@ -32,6 +34,14 @@ public class Manifestacija {
 		this.status = status;
 		this.lokacija = lokacija;
 		this.posterManifestacije = posterManifestacije;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNaziv() {
@@ -100,10 +110,10 @@ public class Manifestacija {
 
 	@Override
 	public String toString() {
-		return "Manifestacija [naziv=" + naziv + ", tipManifestacije=" + tipManifestacije + ", brojMesta=" + brojMesta
-				+ ", datumIVremeOdrzavanja=" + datumIVremeOdrzavanja + ", cenaRegularKarte=" + cenaRegularKarte
-				+ ", status=" + status + ", lokacija=" + lokacija + ", posterManifestacije=" + posterManifestacije
-				+ "]";
+		return "Manifestacija [id=" + id + ", naziv=" + naziv + ", tipManifestacije=" + tipManifestacije
+				+ ", brojMesta=" + brojMesta + ", datumIVremeOdrzavanja=" + datumIVremeOdrzavanja
+				+ ", cenaRegularKarte=" + cenaRegularKarte + ", status=" + status + ", lokacija=" + lokacija
+				+ ", posterManifestacije=" + posterManifestacije + "]";
 	}
 	
 }
