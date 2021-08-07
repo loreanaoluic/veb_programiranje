@@ -1,0 +1,18 @@
+[
+  {
+  "id" : 0,
+  "nazivTipa" : "Koncert"
+  },
+  {
+  "id" : 1,
+  "nazivTipa" : "Predstava"
+  },
+  {
+  "id" : 2,
+  "nazivTipa" : "Film"
+  },
+  {
+  "id" : 3,
+  "nazivTipa" : "Ostalo"
+  }
+]

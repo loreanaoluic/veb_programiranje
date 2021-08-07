@@ -1,0 +1,13 @@
+[
+  {
+    "id": "1q2w3e4r5t",
+    "manifestacija": 1,
+    "datumIVremeManifestacije": "2021-08-19T22:00:00",
+    "cena": 1000.0,
+    "status": "REZERVISANA",
+    "tipKarte": "REGULAR",
+    "obrisana": false,
+    "kupac": "kupac1",
+    "prodavac": "prodavac1"
+  }
+]

@@ -1,0 +1,13 @@
+[
+	{
+		"korisnickoIme": "admin1",
+		"lozinka": "a",
+		"ime" : "Prvi",
+		"prezime": "Admin",
+		"pol": "MUSKO",
+		"datumRodjenja": "2000-01-04",
+		"uloga": "ADMIN",
+		"blokiran": false,
+		"obrisan": false
+	}
+]

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="css/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/ol.css" rel="stylesheet"/>
+	<meta charset="utf-8"/>
+	<style>
+		h2 {
+			margin : 0 ;
+		}
+
+		td {
+			 padding-top: 5px ;
+			 padding-right: 5px ;
+			 padding-bottom: 5px ;
+			 padding-left: 5px ;
+		}
+	</style>
+
+</head>
+
+<body>
+<div id="webShop" align=center>
+<br/>
+<a class="navigacija" style="font-weight:bold" href="#/">Početna</a>
+<a class="navigacija" style="font-weight:bold" href="#/registracija">Registracija</a>
+
+<br/>
+<br/>
+<br/>
+	  <router-view></router-view>
+
+</div>
+
+<script src="js/vue.js"></script>
+<script src="js/vue-router.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/jquery.min.js"></script>
+
+<script src="css/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+<script src="css/ol.js"></script>
+
+<script src="app/registracija.js"></script>
+<script src="app/pocetna_manifestacije.js"></script>
+<script src="app/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nazivTipa": "ZLATNI",
+    "popust": 3.0,
+    "bodovi": 5
+  },
+  {
+    "id": 2,
+    "nazivTipa": "SREBRNI",
+    "popust": 6.0,
+    "bodovi": 10
+  },
+  {
+    "id": 3,
+    "nazivTipa": "BRONZANI",
+    "popust": 9.0,
+    "bodovi": 15
+  }
+]

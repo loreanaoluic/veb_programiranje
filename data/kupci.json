@@ -1,0 +1,16 @@
+[
+  {
+    "korisnickoIme": "kupac1",
+    "lozinka": "k",
+    "ime": "Nikola",
+    "prezime": "Nikolic",
+    "pol": "MUSKO",
+    "datumRodjenja": "2000-04-05",
+    "uloga": "KUPAC",
+    "blokiran": false,
+    "obrisan": false,
+    "karte": ["1q2w3e4r5t"],
+    "brojBodova": 10,
+    "tip": 1
+  }
+]
