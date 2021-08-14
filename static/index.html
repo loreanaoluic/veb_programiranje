@@ -2,34 +2,22 @@
 <html>
 
 <head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 	<link href="css/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="css/ol.css" rel="stylesheet"/>
+	<link href="css/registracija.css" rel="stylesheet"/>
 	<meta charset="utf-8"/>
-	<style>
-		h2 {
-			margin : 0 ;
-		}
-
-		td {
-			 padding-top: 5px ;
-			 padding-right: 5px ;
-			 padding-bottom: 5px ;
-			 padding-left: 5px ;
-		}
-	</style>
 
 </head>
 
 <body>
-<div id="webShop" align=center>
-<br/>
-<a class="navigacija" style="font-weight:bold" href="#/">Početna</a>
-<a class="navigacija" style="font-weight:bold" href="#/registracija">Registracija</a>
 
-<br/>
-<br/>
-<br/>
-	  <router-view></router-view>
+<div id="webShop">
+	<navbar></navbar>
+    <router-view></router-view>
 
 </div>
 
@@ -37,12 +25,17 @@
 <script src="js/vue-router.js"></script>
 <script src="js/axios.js"></script>
 <script src="js/jquery.min.js"></script>
+<script src="js/moment.min.js"></script>
+<script src="js/bootstrap.js"></script>
 
 <script src="css/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 <script src="css/ol.js"></script>
 
 <script src="app/registracija.js"></script>
+<script src="app/prijava.js"></script>
+<script src="app/odjava.js"></script>
 <script src="app/pocetna_manifestacije.js"></script>
+<script src="app/navbar.js"></script>
 <script src="app/app.js"></script>
 </body>
 </html>
