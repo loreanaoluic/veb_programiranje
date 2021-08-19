@@ -236,4 +236,7 @@ public class KorisnikDAO {
         }
     }
 
+    public static ArrayList<Korisnik> getListaSvihKorisnika() {
+        return listaSvihKorisnika;
+    }
 }

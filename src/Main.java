@@ -137,6 +137,9 @@ public class Main {
             return g.toJson(karte);
         });
 
+
+        get("/korisnici/svi-korisnici", (req, res) -> g.toJson(KorisnikDAO.getListaSvihKorisnika()));
+
         post("/korisnici/izmena", (req, res) -> {
             var mapa = g.fromJson(req.body(), HashMap.class);
             Korisnik korisnik = korisnikDAO.findUserByUsername((String)mapa.get("korisnickoIme"));

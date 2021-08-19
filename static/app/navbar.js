@@ -22,6 +22,11 @@ Vue.component("navbar",{
                                 <router-link to="/registracija" class="nav-link">Registruj prodavca</router-link>
                             </div>
                         </div>
+                         <div v-if="(korisnik !== null)">
+                            <div v-if="(korisnik.uloga === 'ADMIN')">
+                                <router-link to="/pregled-svih-korisnika" class="nav-link">Pregled korisnika</router-link>
+                            </div>
+                        </div>
                     </div>
                     <div v-if="(korisnik === null)" class="navbar-nav my-2 my-lg-0">
                         <router-link to="/prijava" class="nav-link">Prijavi se</router-link>
