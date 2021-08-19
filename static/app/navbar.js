@@ -28,6 +28,7 @@ Vue.component("navbar",{
                         <router-link to="/registracija" class="nav-link">Registruj se</router-link>
                     </div>
                     <div v-if="(korisnik !== null)" class="navbar-nav my-2 my-lg-0">
+                        <router-link to="/profil" class="nav-link">Profil</router-link>
                         <router-link to="/odjava" class="nav-link">Odjavi se</router-link>
                     </div>
                 </div>

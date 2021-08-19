@@ -1,8 +1,8 @@
 import com.google.gson.Gson;
+import dao.KartaDAO;
 import dao.KorisnikDAO;
-import model.Korisnik;
-import model.Kupac;
-import model.Prodavac;
+import dao.TipKupcaDAO;
+import model.*;
 import model.enums.Pol;
 import model.enums.Uloga;
 
@@ -16,12 +16,25 @@ import static spark.Spark.*;
 
 public class Main {
     static KorisnikDAO korisnikDAO;
+    static TipKupcaDAO tipKupcaDAO;
+    static KartaDAO kartaDAO;
+
     private static Korisnik ulogovanKorisnik;
+    private static Kupac ulogovanKupac;
+    private static Prodavac ulogovanProdavac;
 
     public static void ucitaj() {
         korisnikDAO = new KorisnikDAO();
+        tipKupcaDAO =new TipKupcaDAO();
+        kartaDAO = new KartaDAO();
+
         ulogovanKorisnik = null;
+        ulogovanKupac = null;
+        ulogovanProdavac = null;
+
         korisnikDAO.ucitajKorisnike();
+        tipKupcaDAO.ucitajTipoveKupaca();
+        kartaDAO.ucitajKarte();
     }
 
     public static void main(String[] args) throws Exception {
@@ -82,8 +95,17 @@ public class Main {
                     return "Nalog obrisan!";
                 }
                 ulogovanKorisnik = korisnik;
-                return g.toJson(korisnik);
-            }else {
+                if (korisnik.getUloga().equals(Uloga.ADMIN)) {
+                    return g.toJson(korisnik);
+                } else if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+                    ulogovanKupac = korisnikDAO.findKupacByUsername(korisnik.getKorisnickoIme());
+                    return g.toJson(ulogovanKupac);
+                } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+                    ulogovanProdavac = korisnikDAO.findProdavacByUsername(korisnik.getKorisnickoIme());
+                    return g.toJson(ulogovanProdavac);
+                }
+                return null;
+            } else {
                 return "Pogrešno korisničko ime/lozinka.";
             }
         });
@@ -91,6 +113,47 @@ public class Main {
         get("/korisnici/logout", (req, res) -> {
             ulogovanKorisnik = null;
             return "Done";
+        });
+
+        get("/korisnici/tipKupca", (req, res) -> {
+            if (ulogovanKorisnik.getUloga().equals(Uloga.KUPAC)) {
+                TipKupca tipKupca = tipKupcaDAO.findTipKupca(ulogovanKupac.getTip());
+                return g.toJson(tipKupca);
+            }
+            return "";
+        });
+
+        get("/korisnici/karte", (req, res) -> {
+            ArrayList<Karta> karte = new ArrayList<>();
+            if (ulogovanKorisnik.getUloga().equals(Uloga.KUPAC)) {
+                for (String id : ulogovanKupac.getKarte()) {
+                    karte.add(kartaDAO.findKarta(id));
+                }
+            } else if (ulogovanKorisnik.getUloga().equals(Uloga.PRODAVAC)) {
+                for (String id : ulogovanProdavac.getKarte()) {
+                    karte.add(kartaDAO.findKarta(id));
+                }
+            }
+            return g.toJson(karte);
+        });
+
+        post("/korisnici/izmena", (req, res) -> {
+            var mapa = g.fromJson(req.body(), HashMap.class);
+            Korisnik korisnik = korisnikDAO.findUserByUsername((String)mapa.get("korisnickoIme"));
+            korisnik.setIme((String)mapa.get("ime"));
+            korisnik.setPrezime((String)mapa.get("prezime"));
+            korisnik.setPol(Pol.valueOf((String)mapa.get("pol")));
+            korisnik.setDatumRodjenja(LocalDate.parse((String)mapa.get("datumRodjenja")));
+            korisnikDAO.izmeniKorisnika(korisnik);
+            ulogovanKorisnik = korisnik;
+            if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+                ulogovanKupac = korisnikDAO.findKupacByUsername(korisnik.getKorisnickoIme());
+                return g.toJson(ulogovanKupac);
+            } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+                ulogovanProdavac = korisnikDAO.findProdavacByUsername(korisnik.getKorisnickoIme());
+                return g.toJson(ulogovanProdavac);
+            }
+            return g.toJson(korisnik);
         });
     }
 }

@@ -3,6 +3,7 @@ package dao;
 import model.Korisnik;
 import model.Kupac;
 import model.Prodavac;
+import model.TipKupca;
 import model.enums.Pol;
 import model.enums.Uloga;
 
@@ -111,15 +112,43 @@ public class KorisnikDAO {
         return null;
     }
 
-    public void dodajKupca(Kupac noviKupac) throws IOException {
+    public Kupac findKupacByUsername(String korisnickoIme) {
+        for (Kupac k : listaKupaca) {
+            if (k.getKorisnickoIme().equals(korisnickoIme)) {
+                return k;
+            }
+        }
+        return null;
+    }
+
+    public Prodavac findProdavacByUsername(String korisnickoIme) {
+        for (Prodavac k : listaProdavaca) {
+            if (k.getKorisnickoIme().equals(korisnickoIme)) {
+                return k;
+            }
+        }
+        return null;
+    }
+
+    public void dodajKorisnika(Korisnik novi) throws IOException {
         FileWriter file = new FileWriter("data/korisnici.csv", true);
-        file.append("\n").append(noviKupac.getKorisnickoIme()).append(",").append(noviKupac.getLozinka()).append(",")
-                .append(noviKupac.getIme()).append(",").append(noviKupac.getPrezime()).append(",")
-                .append(String.valueOf(noviKupac.getPol())).append(",")
-                .append(String.valueOf(noviKupac.getDatumRodjenja()))
-                .append(",").append(String.valueOf(noviKupac.getUloga())).append(",")
-                .append(String.valueOf(noviKupac.getBlokiran())).append(",")
-                .append(String.valueOf(noviKupac.getObrisan())).append(",");
+        file.append(novi.getKorisnickoIme()).append(",").append(novi.getLozinka()).append(",")
+                .append(novi.getIme()).append(",").append(novi.getPrezime()).append(",")
+                .append(String.valueOf(novi.getPol())).append(",")
+                .append(String.valueOf(novi.getDatumRodjenja()))
+                .append(",").append(String.valueOf(novi.getUloga())).append(",")
+                .append(String.valueOf(novi.getBlokiran())).append(",")
+                .append(String.valueOf(novi.getObrisan()));
+        file.flush();
+        file.close();
+    }
+
+    public void dodajKupca(Kupac noviKupac) throws IOException {
+        dodajKorisnika(new Korisnik(noviKupac.getKorisnickoIme(), noviKupac.getLozinka(), noviKupac.getIme(),
+                noviKupac.getPrezime(), noviKupac.getPol(), noviKupac.getDatumRodjenja(), noviKupac.getUloga(),
+                noviKupac.getBlokiran(), noviKupac.getObrisan()));
+        FileWriter file = new FileWriter("data/korisnici.csv", true);
+        file.append(",");
         int counter = 0;
         for (String karta : noviKupac.getKarte()) {
             file.append(karta);
@@ -129,20 +158,17 @@ public class KorisnikDAO {
             }
         }
         file.append(",").append(String.valueOf(noviKupac.getBrojBodova())).append(",")
-                .append(String.valueOf(noviKupac.getTip()));
+                .append(String.valueOf(noviKupac.getTip())).append("\n");
         file.flush();
         file.close();
     }
 
     public void dodajProdavca(Prodavac noviProdavac) throws IOException {
+        dodajKorisnika(new Korisnik(noviProdavac.getKorisnickoIme(), noviProdavac.getLozinka(), noviProdavac.getIme(),
+                noviProdavac.getPrezime(), noviProdavac.getPol(), noviProdavac.getDatumRodjenja(), noviProdavac.getUloga(),
+                noviProdavac.getBlokiran(), noviProdavac.getObrisan()));
         FileWriter file = new FileWriter("data/korisnici.csv", true);
-        file.append("\n").append(noviProdavac.getKorisnickoIme()).append(",").append(noviProdavac.getLozinka()).append(",")
-                .append(noviProdavac.getIme()).append(",").append(noviProdavac.getPrezime()).append(",")
-                .append(String.valueOf(noviProdavac.getPol())).append(",")
-                .append(String.valueOf(noviProdavac.getDatumRodjenja()))
-                .append(",").append(String.valueOf(noviProdavac.getUloga())).append(",")
-                .append(String.valueOf(noviProdavac.getBlokiran())).append(",")
-                .append(String.valueOf(noviProdavac.getObrisan())).append(",");
+        file.append(",");
         int counter = 0;
         for (Integer manifestacija : noviProdavac.getManifestacije()) {
             file.append(Integer.toString(manifestacija));
@@ -160,7 +186,54 @@ public class KorisnikDAO {
                 file.append(" ");
             }
         }
+        file.append("\n");
         file.flush();
         file.close();
     }
+
+    public void izmeniKorisnika(Korisnik izmenjen) throws IOException {
+        Korisnik stari = findUserByUsername(izmenjen.getKorisnickoIme());
+        listaSvihKorisnika.set(listaSvihKorisnika.indexOf(stari), izmenjen);
+
+        if (izmenjen.getUloga().equals(Uloga.KUPAC)) {
+            Kupac kupac = findKupacByUsername(izmenjen.getKorisnickoIme());
+            listaKupaca.remove(kupac);
+            Kupac novi = new Kupac(izmenjen.getKorisnickoIme(), izmenjen.getLozinka(), izmenjen.getIme(),
+                    izmenjen.getPrezime(), izmenjen.getPol(), izmenjen.getDatumRodjenja(), izmenjen.getUloga(),
+                    izmenjen.getBlokiran(), izmenjen.getObrisan(), kupac.getKarte(), kupac.getBrojBodova(), kupac.getTip());
+            listaKupaca.add(novi);
+        } else if (izmenjen.getUloga().equals(Uloga.PRODAVAC)) {
+            Prodavac prodavac = findProdavacByUsername(izmenjen.getKorisnickoIme());
+            listaProdavaca.remove(prodavac);
+            Prodavac novi = new Prodavac(izmenjen.getKorisnickoIme(), izmenjen.getLozinka(), izmenjen.getIme(),
+                    izmenjen.getPrezime(), izmenjen.getPol(), izmenjen.getDatumRodjenja(), izmenjen.getUloga(),
+                    izmenjen.getBlokiran(), izmenjen.getObrisan(), prodavac.getManifestacije(), prodavac.getKarte());
+            listaProdavaca.add(novi);
+        } else if (izmenjen.getUloga().equals(Uloga.ADMIN)) {
+            listaAdmina.remove(stari);
+            listaAdmina.add(izmenjen);
+        }
+
+        sacuvajKorisnike();
+    }
+
+    public void sacuvajKorisnike() throws IOException {
+        FileWriter fw = new FileWriter("data/korisnici.csv",false);
+        fw.flush();
+        fw.close();
+        for (Korisnik admin : listaAdmina) {
+            dodajKorisnika(admin);
+            FileWriter f = new FileWriter("data/korisnici.csv",true);
+            f.append("\n");
+            f.flush();
+            f.close();
+        }
+        for (Prodavac prodavac : listaProdavaca) {
+            dodajProdavca(prodavac);
+        }
+        for (Kupac kupac : listaKupaca) {
+            dodajKupca(kupac);
+        }
+    }
+
 }
