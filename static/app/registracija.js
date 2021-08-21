@@ -58,7 +58,7 @@ Vue.component("registracija", {
 			axios.post('/korisnici/registracija', this.data)
 				.then(function (response) {
 					window.location.href = "#/prijava";
-					window.location.reload()
+					window.location.reload();
 				})
 				.catch(function (error) {
 					alert(error.response.data);

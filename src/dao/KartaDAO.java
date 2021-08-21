@@ -35,12 +35,23 @@ public class KartaDAO {
         }
     }
 
-    public Karta findKarta(String id) {
+    public Karta findKartaById(String id) {
         for (Karta karta : listaKarata) {
             if (karta.getId().equals(id)) {
                 return karta;
             }
         }
         return null;
+    }
+
+    public ArrayList<Karta> findKarteByManifestacijaAndProdavacAndRezervisana(int manifestacija, String prodavac) {
+        ArrayList<Karta> karte = new ArrayList<>();
+        for (Karta karta : listaKarata) {
+            if (karta.getManifestacija() == manifestacija && karta.getProdavac().equals(prodavac) &&
+                    karta.getStatusKarte().equals(StatusKarte.REZERVISANA)) {
+                karte.add(karta);
+            }
+        }
+        return karte;
     }
 }

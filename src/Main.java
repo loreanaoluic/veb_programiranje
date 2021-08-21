@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import dao.KartaDAO;
 import dao.KorisnikDAO;
+import dao.ManifestacijaDAO;
 import dao.TipKupcaDAO;
 import model.*;
 import model.enums.Pol;
@@ -18,6 +19,7 @@ public class Main {
     static KorisnikDAO korisnikDAO;
     static TipKupcaDAO tipKupcaDAO;
     static KartaDAO kartaDAO;
+    static ManifestacijaDAO manifestacijaDAO;
 
     private static Korisnik ulogovanKorisnik;
     private static Kupac ulogovanKupac;
@@ -27,6 +29,7 @@ public class Main {
         korisnikDAO = new KorisnikDAO();
         tipKupcaDAO =new TipKupcaDAO();
         kartaDAO = new KartaDAO();
+        manifestacijaDAO = new ManifestacijaDAO();
 
         ulogovanKorisnik = null;
         ulogovanKupac = null;
@@ -35,6 +38,7 @@ public class Main {
         korisnikDAO.ucitajKorisnike();
         tipKupcaDAO.ucitajTipoveKupaca();
         kartaDAO.ucitajKarte();
+        manifestacijaDAO.ucitajManifestacije();
     }
 
     public static void main(String[] args) throws Exception {
@@ -50,6 +54,8 @@ public class Main {
         });
 
         ucitaj();
+
+        // KORISNICI
 
         post("/korisnici/registracija", (req, res) -> {
             var mapa = g.fromJson(req.body(), HashMap.class);
@@ -106,7 +112,7 @@ public class Main {
                 }
                 return null;
             } else {
-                return "Pogrešno korisničko ime/lozinka.";
+                return "Greska";
             }
         });
 
@@ -127,11 +133,11 @@ public class Main {
             ArrayList<Karta> karte = new ArrayList<>();
             if (ulogovanKorisnik.getUloga().equals(Uloga.KUPAC)) {
                 for (String id : ulogovanKupac.getKarte()) {
-                    karte.add(kartaDAO.findKarta(id));
+                    karte.add(kartaDAO.findKartaById(id));
                 }
             } else if (ulogovanKorisnik.getUloga().equals(Uloga.PRODAVAC)) {
                 for (String id : ulogovanProdavac.getKarte()) {
-                    karte.add(kartaDAO.findKarta(id));
+                    karte.add(kartaDAO.findKartaById(id));
                 }
             }
             return g.toJson(karte);
@@ -157,6 +163,35 @@ public class Main {
                 return g.toJson(ulogovanProdavac);
             }
             return g.toJson(korisnik);
+        });
+
+
+        // MANIFESTACIJE
+
+        get("/manifestacije/manifestacije-prodavca", (req, res) -> {
+            ArrayList<Manifestacija> sveManifestacije = ManifestacijaDAO.getListaManifestacija();
+            ArrayList<Manifestacija> manifestacijeProdavca = new ArrayList<>();
+
+            for (int idManifestacije : ulogovanProdavac.getManifestacije()) {
+                for (Manifestacija manifestacija : sveManifestacije) {
+                    if (idManifestacije == manifestacija.getId()) {
+                        manifestacijeProdavca.add(manifestacija);
+                    }
+                }
+            }
+            return g.toJson(manifestacijeProdavca);
+        });
+
+
+        // KARTE
+
+        get("/karte", (req, res) -> {
+            return "Done";
+        });
+
+        get("/karte/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            return g.toJson(kartaDAO.findKarteByManifestacijaAndProdavacAndRezervisana(id, ulogovanProdavac.getKorisnickoIme()));
         });
     }
 }

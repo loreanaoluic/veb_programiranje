@@ -33,9 +33,13 @@ Vue.component("prijava", {
 
             axios.post('/korisnici/login', this.data)
                 .then(function (response) {
-                    localStorage.setItem('korisnik', JSON.stringify(response.data))
-                    window.location.href = "#/";
-                    window.location.reload()
+                    if (response.data !== "Greska") {
+                        localStorage.setItem('korisnik', JSON.stringify(response.data))
+                        window.location.href = "#/";
+                        window.location.reload()
+                    } else {
+                        alert("Pogrešno korisničko ime/lozinka.");
+                    }
                 })
                 .catch(function (error) {
                     alert("Pogrešno korisničko ime/lozinka.");
