@@ -1,12 +1,21 @@
 package dao;
 
+import model.Lokacija;
 import model.Manifestacija;
+import sort.ManifestacijaPoCeni;
+import sort.ManifestacijaPoDatumuIVremenu;
+import sort.ManifestacijaPoLokaciji;
+import sort.ManifestacijaPoNazivu;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ManifestacijaDAO {
     public static ArrayList<Manifestacija> listaManifestacija = new ArrayList<>();
@@ -27,6 +36,7 @@ public class ManifestacijaDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        sort();
     }
 
     public static ArrayList<Manifestacija> getListaManifestacija() {
@@ -40,5 +50,63 @@ public class ManifestacijaDAO {
             }
         }
         return null;
+    }
+
+    public static void sort() {
+        Collections.sort(listaManifestacija);
+        Collections.reverse(listaManifestacija);
+    }
+
+    public ArrayList<Manifestacija> getAktuelneManifestacije() {
+        ArrayList<Manifestacija> manifestacije = new ArrayList<>();
+        for (Manifestacija m : listaManifestacija) {
+            if (!m.isObrisana()) {
+                manifestacije.add(m);
+            }
+        }
+        return manifestacije;
+    }
+
+    public ArrayList<Manifestacija> searchFilterSort(String naziv, long pocetniDatum, long krajnjiDatum, String lokacija,
+                                                     double pocetnaCena, double krajnjaCena, String tip,
+                                                     String kriterijumSortiranja, boolean opadajuce, boolean rasprodata,
+                                                     LokacijaDAO lokacijaDAO) {
+
+        ArrayList<Manifestacija> pronadjene = new ArrayList<>();
+        for(Manifestacija m : getAktuelneManifestacije()) {
+
+            String lokacijaM = lokacijaDAO.findLokacijaById(m.getId()).getAdresa();
+            long datumM = Timestamp.valueOf(m.getDatumIVremeOdrzavanja()).getTime();
+
+            if(m.getNaziv().toUpperCase().contains(naziv.toUpperCase()) &&
+                    lokacijaM.toUpperCase().contains(lokacija.toUpperCase()) &&
+                    m.getCenaRegular() >= pocetnaCena && m.getCenaRegular() <= krajnjaCena &&
+                    datumM >= pocetniDatum && datumM <= krajnjiDatum) {
+                if(!rasprodata) {
+                    if(m.getBrojMesta() == 0) {
+                        continue;
+                    }
+                }
+                if(!tip.equals("SVE")) {
+                    if(!m.getTipManifestacije().equals(tip)) {
+                        continue;
+                    }
+                }
+                pronadjene.add(m);
+            }
+        }
+
+        switch (kriterijumSortiranja) {
+            case "NAZIV" -> Collections.sort(pronadjene, new ManifestacijaPoNazivu());
+            case "DATUM I VREME" -> Collections.sort(pronadjene, new ManifestacijaPoDatumuIVremenu());
+            case "CENA" -> Collections.sort(pronadjene, new ManifestacijaPoCeni());
+            case "LOKACIJA" -> Collections.sort(pronadjene, new ManifestacijaPoLokaciji());
+        }
+
+        if (opadajuce) {
+            Collections.reverse(pronadjene);
+        }
+
+        return pronadjene;
     }
 }

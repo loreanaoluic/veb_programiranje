@@ -18,7 +18,7 @@ Vue.component("manifestacije-prodavca", {
                           <br>
                           <p>Datum i vreme održavanja: {{ manifestacija.datumIVremeOdrzavanja.date.day }}.{{ manifestacija.datumIVremeOdrzavanja.date.month }}.{{ manifestacija.datumIVremeOdrzavanja.date.year }}. u 
                               {{ manifestacija.datumIVremeOdrzavanja.time.hour}}:{{ manifestacija.datumIVremeOdrzavanja.time.minute}}</p>
-                          <p><i>Broj preostalih mesta: {{ manifestacija.brojMesta }}</i></p>
+                          <p><i>REGULAR karta: {{ manifestacija.cenaRegular }} din</i></p>
                           <p><button type="button" class="btn btn-info" v-on:click="prikaziKarte(manifestacija)">Karte</button></p>
                         </div>
                     </div>

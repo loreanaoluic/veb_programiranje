@@ -1,13 +1,11 @@
 import com.google.gson.Gson;
-import dao.KartaDAO;
-import dao.KorisnikDAO;
-import dao.ManifestacijaDAO;
-import dao.TipKupcaDAO;
+import dao.*;
 import model.*;
 import model.enums.Pol;
 import model.enums.Uloga;
 
 import java.io.File;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +18,7 @@ public class Main {
     static TipKupcaDAO tipKupcaDAO;
     static KartaDAO kartaDAO;
     static ManifestacijaDAO manifestacijaDAO;
+    static LokacijaDAO lokacijaDAO;
 
     private static Korisnik ulogovanKorisnik;
     private static Kupac ulogovanKupac;
@@ -30,6 +29,7 @@ public class Main {
         tipKupcaDAO =new TipKupcaDAO();
         kartaDAO = new KartaDAO();
         manifestacijaDAO = new ManifestacijaDAO();
+        lokacijaDAO = new LokacijaDAO();
 
         ulogovanKorisnik = null;
         ulogovanKupac = null;
@@ -39,6 +39,7 @@ public class Main {
         tipKupcaDAO.ucitajTipoveKupaca();
         kartaDAO.ucitajKarte();
         manifestacijaDAO.ucitajManifestacije();
+        lokacijaDAO.ucitajLokacije();
     }
 
     public static void main(String[] args) throws Exception {
@@ -168,6 +169,13 @@ public class Main {
 
         // MANIFESTACIJE
 
+        get("/manifestacije", (req, res) -> g.toJson(ManifestacijaDAO.getListaManifestacija()));
+
+        get("/manifestacije/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            return g.toJson(lokacijaDAO.findLokacijaById(id));
+        });
+
         get("/manifestacije/manifestacije-prodavca", (req, res) -> {
             ArrayList<Manifestacija> sveManifestacije = ManifestacijaDAO.getListaManifestacija();
             ArrayList<Manifestacija> manifestacijeProdavca = new ArrayList<>();
@@ -180,6 +188,30 @@ public class Main {
                 }
             }
             return g.toJson(manifestacijeProdavca);
+        });
+
+        get("/manifestacije/pretraga", (req, res) -> {
+
+            String naziv = req.queryParams("naziv").trim();
+            long pocetniDatum = Long.parseLong(req.queryParams("pocetniDatum"));
+            long krajnjiDatum = Long.parseLong(req.queryParams("krajnjiDatum"));
+
+            String lokacija = req.queryParams("lokacija").trim();
+
+            double pocetnaCena = Double.parseDouble(req.queryParams("pocetnaCena").trim());
+            double krajnjaCena = Double.parseDouble(req.queryParams("krajnjaCena").trim());
+
+            String tip = req.queryParams("tip").trim();
+            String kriterijumSortiranja = req.queryParams("kriterijumSortiranja").trim();
+            boolean opadajuce = Boolean.parseBoolean(req.queryParams("opadajuce").trim());
+            boolean rasprodata = Boolean.parseBoolean(req.queryParams("rasprodata").trim());
+
+            List<Manifestacija> manifestacije = manifestacijaDAO.searchFilterSort(naziv, pocetniDatum, krajnjiDatum,
+                    lokacija, pocetnaCena, krajnjaCena, tip, kriterijumSortiranja, opadajuce, rasprodata, lokacijaDAO);
+
+            res.type("application/json");
+            return g.toJson(manifestacije);
+
         });
 
 

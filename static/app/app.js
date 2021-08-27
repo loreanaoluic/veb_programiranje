@@ -6,6 +6,7 @@ const Profil = { template: '<profil></profil>'}
 const PregledSvihKorisnika = { template: '<pregled-svih-korisnika></pregled-svih-korisnika>'}
 const ManifestacijeProdavca = { template: '<manifestacije-prodavca></manifestacije-prodavca>'}
 const KarteZaManifestaciju = { template: '<karte-za-manifestaciju></karte-za-manifestaciju>'}
+const Manifestacija = { template: '<manifestacija></manifestacija>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -17,7 +18,8 @@ const router = new VueRouter({
 	    { path: '/profil', component: Profil },
 	    { path: '/pregled-svih-korisnika', component: PregledSvihKorisnika},
 	    { path: '/manifestacije-prodavca', component: ManifestacijeProdavca},
-	    { path: '/karte-za-manifestaciju', component: KarteZaManifestaciju}
+	    { path: '/karte-za-manifestaciju', component: KarteZaManifestaciju},
+	    { path: '/manifestacija', component: Manifestacija}
 	  ]
 });
 

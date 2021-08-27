@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 
-public class Manifestacija {
+public class Manifestacija implements Comparable<Manifestacija> {
 	private int id;
 	private String naziv;
 	private String tipManifestacije;
@@ -109,5 +109,10 @@ public class Manifestacija {
 
 	public void setObrisana(boolean obrisana) {
 		this.obrisana = obrisana;
+	}
+
+	@Override
+	public int compareTo(Manifestacija o) {
+		return this.datumIVremeOdrzavanja.compareTo(o.getDatumIVremeOdrzavanja());
 	}
 }
