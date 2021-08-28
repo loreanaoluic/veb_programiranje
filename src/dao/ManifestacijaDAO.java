@@ -1,5 +1,6 @@
 package dao;
 
+import model.Korisnik;
 import model.Lokacija;
 import model.Manifestacija;
 import sort.ManifestacijaPoCeni;
@@ -9,6 +10,7 @@ import sort.ManifestacijaPoNazivu;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -108,5 +110,26 @@ public class ManifestacijaDAO {
         }
 
         return pronadjene;
+    }
+
+    public void dodajManifestaciju(Manifestacija manifestacija) throws IOException {
+        String tip = manifestacija.getTipManifestacije();
+        manifestacija.setTipManifestacije(tip.toUpperCase());
+        FileWriter file = new FileWriter("data/manifestacije.csv", true);
+        file.append(String.valueOf(manifestacija.getId())).append(",")
+                .append(manifestacija.getNaziv()).append(",")
+                .append(manifestacija.getTipManifestacije()).append(",")
+                .append(String.valueOf(manifestacija.getBrojMesta())).append(",")
+                .append(String.valueOf(manifestacija.getDatumIVremeOdrzavanja())).append(",")
+                .append(String.valueOf(manifestacija.getCenaRegular())).append(",")
+                .append(String.valueOf(manifestacija.getStatus())).append(",")
+                .append(String.valueOf(manifestacija.getLokacija())).append(",")
+                .append(manifestacija.getPoster()).append(",")
+                .append(String.valueOf(manifestacija.isObrisana()));
+        file.append("\n");
+        file.flush();
+        file.close();
+
+        listaManifestacija.add(manifestacija);
     }
 }

@@ -1,9 +1,11 @@
 package dao;
 
 import model.Lokacija;
+import model.Manifestacija;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -37,5 +39,18 @@ public class LokacijaDAO {
             }
         }
         return null;
+    }
+
+    public void dodajLokaciju(Lokacija lokacija) throws IOException {
+        FileWriter file = new FileWriter("data/lokacije.csv", true);
+        file.append(String.valueOf(lokacija.getId())).append(",")
+                .append(String.valueOf(lokacija.getGeografskaSirina())).append(",")
+                .append(String.valueOf(lokacija.getGeografskaDuzina())).append(",")
+                .append(lokacija.getAdresa());
+        file.append("\n");
+        file.flush();
+        file.close();
+
+        listaLokacija.add(lokacija);
     }
 }

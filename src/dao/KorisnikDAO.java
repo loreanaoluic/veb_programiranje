@@ -141,6 +141,7 @@ public class KorisnikDAO {
                 .append(String.valueOf(novi.getObrisan()));
         file.flush();
         file.close();
+
     }
 
     public void dodajKupca(Kupac noviKupac) throws IOException {
@@ -161,6 +162,7 @@ public class KorisnikDAO {
                 .append(String.valueOf(noviKupac.getTip())).append("\n");
         file.flush();
         file.close();
+
     }
 
     public void dodajProdavca(Prodavac noviProdavac) throws IOException {
@@ -189,6 +191,7 @@ public class KorisnikDAO {
         file.append("\n");
         file.flush();
         file.close();
+
     }
 
     public void izmeniKorisnika(Korisnik izmenjen) throws IOException {

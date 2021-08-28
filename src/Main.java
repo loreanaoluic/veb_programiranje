@@ -3,13 +3,21 @@ import dao.*;
 import model.*;
 import model.enums.Pol;
 import model.enums.Uloga;
+import spark.utils.IOUtils;
 
 import java.io.File;
-import java.sql.Date;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
 
 import static spark.Spark.*;
 
@@ -173,10 +181,10 @@ public class Main {
 
         get("/manifestacije/:id", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
-            return g.toJson(lokacijaDAO.findLokacijaById(id));
+            return g.toJson(lokacijaDAO.findLokacijaById(manifestacijaDAO.findManifestacijaById(id).getLokacija()));
         });
 
-        get("/manifestacije/manifestacije-prodavca", (req, res) -> {
+        post("/manifestacije/manifestacije-prodavca", (req, res) -> {
             ArrayList<Manifestacija> sveManifestacije = ManifestacijaDAO.getListaManifestacija();
             ArrayList<Manifestacija> manifestacijeProdavca = new ArrayList<>();
 
@@ -214,6 +222,46 @@ public class Main {
 
         });
 
+        post("/manifestacije/nova", (req, res) -> {
+
+            // TODO : da li postoji u to vreme na toj lokaciji
+
+            var mapa = g.fromJson(req.body(), HashMap.class);
+
+            Random rand = new Random();
+
+            Lokacija lokacija = new Lokacija(rand.nextInt(1000), Double.parseDouble(String.valueOf(mapa.get("geografskaSirina"))),
+                    Double.parseDouble(String.valueOf(mapa.get("geografskaDuzina"))), (String) mapa.get("adresa"));
+
+            Manifestacija manifestacija = new Manifestacija(rand.nextInt(1000), (String) mapa.get("naziv"),
+                    (String) mapa.get("tipManifestacije"), Integer.parseInt((String) mapa.get("brojMesta")),
+                    LocalDateTime.parse((CharSequence) mapa.get("datumIVremeOdrzavanja")), Double.parseDouble((String) mapa.get("cenaRegular")), false, lokacija.getId(),
+                    (String) mapa.get("poster"), false);
+
+            for (Lokacija l : LokacijaDAO.listaLokacija) {
+                if (l.getAdresa().equals(lokacija.getAdresa()) && l.getGeografskaDuzina() == lokacija.getGeografskaDuzina()
+                        && l.getGeografskaSirina() == lokacija.getGeografskaSirina()) {
+                    for (Manifestacija m : ManifestacijaDAO.listaManifestacija) {
+                        if (m.getDatumIVremeOdrzavanja().equals(manifestacija.getDatumIVremeOdrzavanja())
+                        && m.getLokacija() == l.getId()) {
+                            return "Već postoji manifestacija na željenoj lokaciji u to vreme!";
+                        }
+                    }
+                }
+            }
+
+            lokacijaDAO.dodajLokaciju(lokacija);
+            manifestacijaDAO.dodajManifestaciju(manifestacija);
+
+            List<Integer> manifestacije = ulogovanProdavac.getManifestacije();
+            manifestacije.add(manifestacija.getId());
+            ulogovanProdavac.setManifestacije(manifestacije);
+
+            korisnikDAO.sacuvajKorisnike();
+
+            return "Done";
+        });
+
 
         // KARTE
 
@@ -225,5 +273,6 @@ public class Main {
             int id = Integer.parseInt(req.params("id"));
             return g.toJson(kartaDAO.findKarteByManifestacijaAndProdavacAndRezervisana(id, ulogovanProdavac.getKorisnickoIme()));
         });
+
     }
 }

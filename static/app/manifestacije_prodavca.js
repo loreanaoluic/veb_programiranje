@@ -32,7 +32,7 @@ Vue.component("manifestacije-prodavca", {
     ,
     mounted(){
         let data = this;
-        axios.get('/manifestacije/manifestacije-prodavca', this.data)
+        axios.post('/manifestacije/manifestacije-prodavca')
             .then(function (response) {
                 data.manifestacije = response.data;
             })
