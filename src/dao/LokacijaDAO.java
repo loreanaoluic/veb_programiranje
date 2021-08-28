@@ -53,4 +53,26 @@ public class LokacijaDAO {
 
         listaLokacija.add(lokacija);
     }
+
+    public void sacuvajLokacije() throws IOException {
+        FileWriter f = new FileWriter("data/lokacije.csv", false);
+        for (Lokacija lokacija : listaLokacija) {
+            f.append(String.valueOf(lokacija.getId())).append(",")
+                    .append(String.valueOf(lokacija.getGeografskaSirina())).append(",")
+                    .append(String.valueOf(lokacija.getGeografskaDuzina())).append(",")
+                    .append(lokacija.getAdresa()).append("\n");
+        }
+        f.flush();
+        f.close();
+    }
+
+    public Lokacija izmeniLokaciju(Lokacija novaLokacija) throws IOException {
+        Lokacija lokacija = findLokacijaById(novaLokacija.getId());
+        lokacija.setGeografskaDuzina(lokacija.getGeografskaDuzina());
+        lokacija.setGeografskaSirina(lokacija.getGeografskaSirina());
+        lokacija.setAdresa(novaLokacija.getAdresa());
+        sacuvajLokacije();
+
+        return lokacija;
+    }
 }

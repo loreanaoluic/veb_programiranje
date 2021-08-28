@@ -1,7 +1,5 @@
 package dao;
 
-import model.Korisnik;
-import model.Lokacija;
 import model.Manifestacija;
 import sort.ManifestacijaPoCeni;
 import sort.ManifestacijaPoDatumuIVremenu;
@@ -12,9 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,5 +127,41 @@ public class ManifestacijaDAO {
         file.close();
 
         listaManifestacija.add(manifestacija);
+    }
+
+    public void sacuvajManifestacije() throws IOException {
+        FileWriter f = new FileWriter("data/manifestacije.csv", false);
+        for (Manifestacija manifestacija : listaManifestacija) {
+            f.append(String.valueOf(manifestacija.getId())).append(",")
+                    .append(manifestacija.getNaziv()).append(",")
+                    .append(manifestacija.getTipManifestacije()).append(",")
+                    .append(String.valueOf(manifestacija.getBrojMesta())).append(",")
+                    .append(String.valueOf(manifestacija.getDatumIVremeOdrzavanja())).append(",")
+                    .append(String.valueOf(manifestacija.getCenaRegular())).append(",")
+                    .append(String.valueOf(manifestacija.getStatus())).append(",")
+                    .append(String.valueOf(manifestacija.getLokacija())).append(",")
+                    .append(manifestacija.getPoster()).append(",")
+                    .append(String.valueOf(manifestacija.isObrisana())).append("\n");
+        }
+        f.flush();
+        f.close();
+    }
+
+    public void promeniStatusUAktivno(Manifestacija manifestacija) throws IOException {
+        manifestacija.setStatus(true);
+        sacuvajManifestacije();
+    }
+
+    public Manifestacija izmeniManifestaciju(Manifestacija novaManifestacija) throws IOException {
+        Manifestacija manifestacija = findManifestacijaById(novaManifestacija.getId());
+        manifestacija.setNaziv(novaManifestacija.getNaziv());
+        manifestacija.setTipManifestacije(novaManifestacija.getTipManifestacije());
+        //manifestacija.setBrojMesta(novaManifestacija.getBrojMesta());
+        manifestacija.setDatumIVremeOdrzavanja(novaManifestacija.getDatumIVremeOdrzavanja());
+        manifestacija.setCenaRegular(novaManifestacija.getCenaRegular());
+        manifestacija.setPoster(novaManifestacija.getPoster());
+        sacuvajManifestacije();
+
+        return manifestacija;
     }
 }

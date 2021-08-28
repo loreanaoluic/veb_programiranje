@@ -223,9 +223,6 @@ public class Main {
         });
 
         post("/manifestacije/nova", (req, res) -> {
-
-            // TODO : da li postoji u to vreme na toj lokaciji
-
             var mapa = g.fromJson(req.body(), HashMap.class);
 
             Random rand = new Random();
@@ -260,6 +257,26 @@ public class Main {
             korisnikDAO.sacuvajKorisnike();
 
             return "Done";
+        });
+
+        post("/manifestacije/status/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            Manifestacija manifestacija = manifestacijaDAO.findManifestacijaById(id);
+            manifestacijaDAO.promeniStatusUAktivno(manifestacija);
+            return manifestacija;
+        });
+
+        post("/manifestacije/izmenaManifestacije/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            var mapa = g.fromJson(req.body(), HashMap.class);
+
+            Manifestacija novaManifestacija = new Manifestacija(id, String.valueOf(mapa.get("naziv")), String.valueOf(mapa.get("tipManifestacije")),
+                   0, LocalDateTime.parse(String.valueOf(mapa.get("datumIVremeOdrzavanja"))),
+                    Double.parseDouble(String.valueOf(mapa.get("cenaRegular"))), Boolean.parseBoolean(String.valueOf(mapa.get("status"))),
+                    0, String.valueOf(mapa.get("poster")), false);
+
+            return manifestacijaDAO.izmeniManifestaciju(novaManifestacija);
+
         });
 
 

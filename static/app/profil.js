@@ -3,7 +3,6 @@ Vue.component("profil", {
         return {
             korisnik: "",
             datumRodjenjaFormat: "",
-            datumIVremeOdrzavanja: "",
             tipKupca: "",
             karte: [],
             input: {
@@ -113,7 +112,7 @@ Vue.component("profil", {
           </div>
         </div>
         
-         <div class="modal fade" id="IzmeniModal" tabindex="-1" aria-labelledby="IzmeniModal" aria-hidden="true">
+     <div class="modal fade" id="IzmeniModal" tabindex="-1" aria-labelledby="IzmeniModal" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">

@@ -36,7 +36,7 @@ Vue.component("prijava", {
                     if (response.data !== "Greska") {
                         localStorage.setItem('korisnik', JSON.stringify(response.data))
                         window.location.href = "#/";
-                        window.location.reload()
+                        window.location.reload();
                     } else {
                         alert("Pogrešno korisničko ime/lozinka.");
                     }
