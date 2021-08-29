@@ -105,7 +105,7 @@ Vue.component("pocetna-strana", {
 			let pDatum = (new Date(this.searchParams.pocetniDatum)).getTime();
 			let kDatum = (new Date(this.searchParams.krajnjiDatum)).getTime();
 
-			axios.get('/manifestacije/pretraga?naziv='  + this.searchParams.naziv + "&pocetniDatum=" + pDatum + "&krajnjiDatum="
+			axios.post('/manifestacije/pretraga?naziv='  + this.searchParams.naziv + "&pocetniDatum=" + pDatum + "&krajnjiDatum="
 				+ kDatum + "&lokacija=" + this.searchParams.lokacija + "&pocetnaCena=" + this.searchParams.pocetnaCena +
 				"&krajnjaCena=" + this.searchParams.krajnjaCena + "&tip=" + this.searchParams.tip + "&rasprodata=" +
 				this.searchParams.rasprodata + "&kriterijumSortiranja=" + this.searchParams.kriterijumSortiranja +

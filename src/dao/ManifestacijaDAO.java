@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class ManifestacijaDAO {
     public static ArrayList<Manifestacija> listaManifestacija = new ArrayList<>();
@@ -39,6 +40,14 @@ public class ManifestacijaDAO {
 
     public static ArrayList<Manifestacija> getListaManifestacija() {
         return listaManifestacija;
+    }
+
+    public HashMap<Integer, Manifestacija> getMapaManifestacija() {
+        HashMap<Integer, Manifestacija> mapa = new HashMap<Integer, Manifestacija>();
+        for (Manifestacija manifestacija : listaManifestacija) {
+            mapa.put(manifestacija.getId(), manifestacija);
+        }
+        return mapa;
     }
 
     public Manifestacija findManifestacijaById (int id) {

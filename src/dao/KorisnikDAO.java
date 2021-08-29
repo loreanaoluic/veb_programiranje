@@ -1,20 +1,22 @@
 package dao;
 
-import model.Korisnik;
-import model.Kupac;
-import model.Prodavac;
-import model.TipKupca;
+import model.*;
 import model.enums.Pol;
+import model.enums.StatusKarte;
+import model.enums.TipKarte;
 import model.enums.Uloga;
+import sort.*;
 
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class KorisnikDAO {
 
@@ -241,5 +243,37 @@ public class KorisnikDAO {
 
     public static ArrayList<Korisnik> getListaSvihKorisnika() {
         return listaSvihKorisnika;
+    }
+
+    public ArrayList<Korisnik> searchFilterSort(String ime, String prezime, String korisnickoIme, String kriterijumSortiranja,
+                                             String uloga, boolean opadajuce) {
+
+        ArrayList<Korisnik> pronadjene = new ArrayList<>();
+        for(Korisnik k : listaSvihKorisnika) {
+
+            if(k.getIme().toUpperCase().contains(ime.toUpperCase()) &&
+                    k.getPrezime().toUpperCase().contains(prezime.toUpperCase()) &&
+                    k.getKorisnickoIme().toUpperCase().contains(korisnickoIme.toUpperCase())) {
+                if(!uloga.equals("SVE")) {
+                    if(!k.getUloga().equals(Uloga.valueOf(uloga))) {
+                        continue;
+                    }
+                }
+                pronadjene.add(k);
+            }
+        }
+
+        switch (kriterijumSortiranja) {
+            case "IME" -> pronadjene.sort(new KorisniciPoImenu());
+            case "PREZIME" -> pronadjene.sort(new KorisniciPoPrezimenu());
+            case "KORISNICKO_IME" -> pronadjene.sort(new KorisniciPoKorisnickomImenu());
+            case "BROJ_BODOVA" -> pronadjene.sort(new KorisniciPoBrojuBodova());
+        }
+
+        if (opadajuce) {
+            Collections.reverse(pronadjene);
+        }
+
+        return pronadjene;
     }
 }

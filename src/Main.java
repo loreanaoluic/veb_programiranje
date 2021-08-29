@@ -3,21 +3,14 @@ import dao.*;
 import model.*;
 import model.enums.Pol;
 import model.enums.Uloga;
-import spark.utils.IOUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.http.Part;
 
 import static spark.Spark.*;
 
@@ -174,10 +167,29 @@ public class Main {
             return g.toJson(korisnik);
         });
 
+        post("/korisnici/pretraga", (req, res) -> {
+
+            String ime = req.queryParams("ime").trim();
+            String prezime = req.queryParams("prezime").trim();
+            String korisnickoIme = req.queryParams("korisnickoIme").trim();
+            String kriterijumSortiranja = req.queryParams("kriterijumSortiranja").trim();
+            String uloga = req.queryParams("uloga").trim();
+            boolean opadajuce = Boolean.parseBoolean(req.queryParams("opadajuce").trim());
+
+            List<Korisnik> korisnici = korisnikDAO.searchFilterSort(ime, prezime, korisnickoIme, kriterijumSortiranja,
+                    uloga, opadajuce);
+
+            res.type("application/json");
+            return g.toJson(korisnici);
+
+        });
+
 
         // MANIFESTACIJE
 
         get("/manifestacije", (req, res) -> g.toJson(ManifestacijaDAO.getListaManifestacija()));
+
+        get("/manifestacijeMapa", (req, res) -> g.toJson(manifestacijaDAO.getMapaManifestacija()));
 
         get("/manifestacije/:id", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
@@ -198,7 +210,7 @@ public class Main {
             return g.toJson(manifestacijeProdavca);
         });
 
-        get("/manifestacije/pretraga", (req, res) -> {
+        post("/manifestacije/pretraga", (req, res) -> {
 
             String naziv = req.queryParams("naziv").trim();
             long pocetniDatum = Long.parseLong(req.queryParams("pocetniDatum"));
@@ -282,9 +294,7 @@ public class Main {
 
         // KARTE
 
-        get("/karte", (req, res) -> {
-            return "Done";
-        });
+        get("/karte", (req, res) -> "Done");
 
         get("/karte/:id", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
@@ -295,6 +305,30 @@ public class Main {
                 return g.toJson(kartaDAO.findKarteByManifestacija(id));
             }
             return "Error";
+        });
+
+        get("/karteKupca", (req, res) -> g.toJson(kartaDAO.findKarteByKupac(ulogovanKupac.getKorisnickoIme())));
+
+        post("/karte/pretraga", (req, res) -> {
+
+            String naziv = req.queryParams("naziv").trim();
+            long pocetniDatum = Long.parseLong(req.queryParams("pocetniDatum"));
+            long krajnjiDatum = Long.parseLong(req.queryParams("krajnjiDatum"));
+
+            double pocetnaCena = Double.parseDouble(req.queryParams("pocetnaCena").trim());
+            double krajnjaCena = Double.parseDouble(req.queryParams("krajnjaCena").trim());
+
+            String tip = req.queryParams("tip").trim();
+            String status = req.queryParams("status").trim();
+            String kriterijumSortiranja = req.queryParams("kriterijumSortiranja").trim();
+            boolean opadajuce = Boolean.parseBoolean(req.queryParams("opadajuce").trim());
+
+            List<Karta> karte = kartaDAO.searchFilterSort(naziv, pocetniDatum, krajnjiDatum,
+                    pocetnaCena, krajnjaCena, tip, status, kriterijumSortiranja, opadajuce, manifestacijaDAO);
+
+            res.type("application/json");
+            return g.toJson(karte);
+
         });
 
     }

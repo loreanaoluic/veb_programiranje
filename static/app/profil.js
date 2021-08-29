@@ -89,25 +89,6 @@ Vue.component("profil", {
                   </div>
                 </div>
               </div>
-
-              <div class="row gutters-sm">
-              
-                <div class="col-sm-5 mb-3" v-if="(korisnik.uloga !== 'ADMIN')" v-for="karta in karte" :key="karta.id">
-                  <div class="karte">
-                      <div class="card-body">
-                          <div align="center">
-                              <h6><i class="material-icons text-info mr-2"><br><br><b> {{ karta.datumIVremeManifestacije.date.day }}.{{ karta.datumIVremeManifestacije.date.month }}.{{ karta.datumIVremeManifestacije.date.year }} u 
-                              {{ karta.datumIVremeManifestacije.time.hour}}:{{ karta.datumIVremeManifestacije.time.minute}} </b></i></h6>
-                              <small><b>Cena:</b> {{karta.cena}} din</small>
-                              <br>
-                              <small><b>Tip karte:</b> {{karta.tipKarte}}</small>
-                              <br>
-                              <br>
-                          </div>
-                      </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -172,10 +153,6 @@ Vue.component("profil", {
         axios.get('/korisnici/tipKupca', this.data)
             .then(function (response) {
                 data.tipKupca = response.data;
-            })
-        axios.get('/korisnici/karte', this.data)
-            .then(function (response) {
-                data.karte = response.data;
             })
     },
     methods : {

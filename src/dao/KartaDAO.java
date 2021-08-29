@@ -1,14 +1,18 @@
 package dao;
 
 import model.Karta;
+import model.Manifestacija;
 import model.enums.StatusKarte;
 import model.enums.TipKarte;
+import sort.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class KartaDAO {
     public static ArrayList<Karta> listaKarata = new ArrayList<>();
@@ -63,5 +67,55 @@ public class KartaDAO {
             }
         }
         return karte;
+    }
+
+    public ArrayList<Karta> findKarteByKupac(String kupac) {
+        ArrayList<Karta> karte = new ArrayList<>();
+        for (Karta karta : listaKarata) {
+            if (karta.getKupac().equals(kupac)) {
+                karte.add(karta);
+            }
+        }
+        return karte;
+    }
+
+    public ArrayList<Karta> searchFilterSort(String naziv, long pocetniDatum, long krajnjiDatum, double pocetnaCena,
+                                             double krajnjaCena, String tip, String status, String kriterijumSortiranja,
+                                             boolean opadajuce, ManifestacijaDAO manifestacijaDAO) {
+
+        ArrayList<Karta> pronadjene = new ArrayList<>();
+        for(Karta k : listaKarata) {
+
+            String manifestacija = manifestacijaDAO.findManifestacijaById(k.getManifestacija()).getNaziv();
+            long datumM = Timestamp.valueOf(k.getDatumIVremeManifestacije()).getTime();
+
+            if(manifestacija.toUpperCase().contains(naziv.toUpperCase()) &&
+                    k.getCena() >= pocetnaCena && k.getCena() <= krajnjaCena &&
+                    datumM >= pocetniDatum && datumM <= krajnjiDatum) {
+                if(!tip.equals("SVE")) {
+                    if(!k.getTipKarte().equals(TipKarte.valueOf(tip))) {
+                        continue;
+                    }
+                }
+                if(!status.equals("SVE")) {
+                    if(!k.getStatusKarte().equals(StatusKarte.valueOf(status))) {
+                        continue;
+                    }
+                }
+                pronadjene.add(k);
+            }
+        }
+
+        switch (kriterijumSortiranja) {
+            case "MANIFESTACIJA" -> pronadjene.sort(new KartePoManifestaciji());
+            case "DATUM I VREME" -> pronadjene.sort(new KartePoDatumuIVremenu());
+            case "CENA" -> pronadjene.sort(new KartePoCeni());
+        }
+
+        if (opadajuce) {
+            Collections.reverse(pronadjene);
+        }
+
+        return pronadjene;
     }
 }

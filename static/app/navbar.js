@@ -37,6 +37,11 @@ Vue.component("navbar",{
                                 <router-link to="/nova-manifestacija" class="nav-link">Dodaj manifestaciju</router-link>
                             </div>
                         </div>
+                         <div v-if="(korisnik !== null)">
+                            <div v-if="(korisnik.uloga === 'KUPAC')">
+                                <router-link to="/karte-kupca" class="nav-link">Moje karte</router-link>
+                            </div>
+                        </div>
                     </div>
                     <div v-if="(korisnik === null)" class="navbar-nav my-2 my-lg-0">
                         <router-link to="/prijava" class="nav-link">Prijavi se</router-link>
