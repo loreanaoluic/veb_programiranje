@@ -12,9 +12,9 @@ Vue.component("pocetna-strana", {
 				kriterijumSortiranja: "NAZIV",
 				tip: "SVE",
 				opadajuce: false,
-				rasprodata: false,
-				korisnik: {}
-			}
+				rasprodata: false
+			},
+			korisnik: {}
 		}
 	},
 	template: ` 
@@ -132,6 +132,6 @@ Vue.component("pocetna-strana", {
 					window.location.href = "#/karte-za-manifestaciju";
 				})
 		}
-}
+	}
 
 });

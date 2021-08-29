@@ -8,6 +8,7 @@ import sort.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -117,5 +118,27 @@ public class KartaDAO {
         }
 
         return pronadjene;
+    }
+
+    public void dodajKartu(Karta karta) throws IOException {
+        FileWriter file = new FileWriter("data/karte.csv", true);
+        file.append(karta.getId()).append(",")
+                .append(String.valueOf(karta.getManifestacija())).append(",")
+                .append(String.valueOf(karta.getDatumIVremeManifestacije())).append(",")
+                .append(String.valueOf(karta.getCena())).append(",")
+                .append(String.valueOf(karta.getStatusKarte())).append(",")
+                .append(String.valueOf(karta.getTipKarte())).append(",")
+                .append(String.valueOf(karta.isObrisana())).append(",")
+                .append(String.valueOf(karta.getKupac())).append(",")
+                .append(String.valueOf(karta.getProdavac()));
+        file.append("\n");
+        file.flush();
+        file.close();
+
+        listaKarata.add(karta);
+    }
+
+    public void rezervisiKarte() {
+
     }
 }

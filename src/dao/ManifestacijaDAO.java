@@ -165,7 +165,7 @@ public class ManifestacijaDAO {
         Manifestacija manifestacija = findManifestacijaById(novaManifestacija.getId());
         manifestacija.setNaziv(novaManifestacija.getNaziv());
         manifestacija.setTipManifestacije(novaManifestacija.getTipManifestacije());
-        //manifestacija.setBrojMesta(novaManifestacija.getBrojMesta());
+        manifestacija.setBrojMesta(novaManifestacija.getBrojMesta());
         manifestacija.setDatumIVremeOdrzavanja(novaManifestacija.getDatumIVremeOdrzavanja());
         manifestacija.setCenaRegular(novaManifestacija.getCenaRegular());
         manifestacija.setPoster(novaManifestacija.getPoster());

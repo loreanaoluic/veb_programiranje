@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class KorisnikDAO {
 
@@ -127,6 +128,17 @@ public class KorisnikDAO {
         for (Prodavac k : listaProdavaca) {
             if (k.getKorisnickoIme().equals(korisnickoIme)) {
                 return k;
+            }
+        }
+        return null;
+    }
+
+    public Prodavac findProdavacByManifestacija(int manifestacija) {
+        for (Prodavac p : listaProdavaca) {
+            for (int m : p.getManifestacije()) {
+                if (m == manifestacija) {
+                    return p;
+                }
             }
         }
         return null;
@@ -275,5 +287,21 @@ public class KorisnikDAO {
         }
 
         return pronadjene;
+    }
+
+    public void dodajKarteProdavcu(String karta, String prodavac) throws IOException {
+        Prodavac p = findProdavacByUsername(prodavac);
+        List<String> karte = p.getKarte();
+        karte.add(karta);
+        p.setKarte(karte);
+        sacuvajKorisnike();
+    }
+
+    public void dodajKarteKupcu(String karta, String kupac) throws IOException {
+        Kupac k = findKupacByUsername(kupac);
+        List<String> karte = k.getKarte();
+        karte.add(karta);
+        k.setKarte(karte);
+        sacuvajKorisnike();
     }
 }

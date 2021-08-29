@@ -2,6 +2,8 @@ import com.google.gson.Gson;
 import dao.*;
 import model.*;
 import model.enums.Pol;
+import model.enums.StatusKarte;
+import model.enums.TipKarte;
 import model.enums.Uloga;
 
 import java.io.File;
@@ -25,6 +27,8 @@ public class Main {
     private static Kupac ulogovanKupac;
     private static Prodavac ulogovanProdavac;
 
+    private static ArrayList<ShoppingCartItem> shoppingCartItems;
+
     public static void ucitaj() {
         korisnikDAO = new KorisnikDAO();
         tipKupcaDAO =new TipKupcaDAO();
@@ -35,6 +39,8 @@ public class Main {
         ulogovanKorisnik = null;
         ulogovanKupac = null;
         ulogovanProdavac = null;
+
+        shoppingCartItems = new ArrayList<>();
 
         korisnikDAO.ucitajKorisnike();
         tipKupcaDAO.ucitajTipoveKupaca();
@@ -283,7 +289,7 @@ public class Main {
             var mapa = g.fromJson(req.body(), HashMap.class);
 
             Manifestacija novaManifestacija = new Manifestacija(id, String.valueOf(mapa.get("naziv")), String.valueOf(mapa.get("tipManifestacije")),
-                   0, LocalDateTime.parse(String.valueOf(mapa.get("datumIVremeOdrzavanja"))),
+                   Integer.parseInt(String.valueOf(mapa.get("brojMesta"))), LocalDateTime.parse(String.valueOf(mapa.get("datumIVremeOdrzavanja"))),
                     Double.parseDouble(String.valueOf(mapa.get("cenaRegular"))), Boolean.parseBoolean(String.valueOf(mapa.get("status"))),
                     0, String.valueOf(mapa.get("poster")), false);
 
@@ -329,6 +335,69 @@ public class Main {
             res.type("application/json");
             return g.toJson(karte);
 
+        });
+
+        post("/karte/rezervisi/:id", (req, res) -> {
+
+            int id = Integer.parseInt(req.params("id"));
+            var mapa = g.fromJson(req.body(), HashMap.class);
+
+            Manifestacija manifestacija = manifestacijaDAO.findManifestacijaById(id);
+
+            Random rand = new Random();
+
+            if (manifestacija.getStatus() && manifestacija.getBrojMesta() >
+                    Integer.parseInt(String.valueOf(mapa.get("kolicina")))) {
+                ShoppingCartItem shoppingCartItem = new ShoppingCartItem(rand.nextInt(1000), id, manifestacija.getCenaRegular(),
+                        Integer.parseInt(String.valueOf(mapa.get("kolicina"))), TipKarte.valueOf((String) mapa.get("tipKarte")));
+                shoppingCartItems.add(shoppingCartItem);
+
+                return "Done";
+
+            }
+
+            return "Error";
+
+        });
+
+        post("/karte/korpa", (req, res) -> g.toJson(shoppingCartItems));
+
+        post("/karte/cena", (req, res) -> {
+            double ukupnaCena = 0;
+
+            for (ShoppingCartItem shoppingCartItem : shoppingCartItems) {
+                ukupnaCena += shoppingCartItem.getUkupnaCena();
+            }
+
+            return ukupnaCena;
+        });
+
+        post("/karte/rezervisi", (req, res) -> {
+            Double cena = Double.parseDouble(req.queryParams("cena").trim());
+
+            for (ShoppingCartItem shoppingCartItem : shoppingCartItems) {
+                for (int i = 0; i < shoppingCartItem.getKolicina(); i++) {
+                    Manifestacija manifestacija = manifestacijaDAO.findManifestacijaById(shoppingCartItem.getManifestacija());
+                    Prodavac prodavac = korisnikDAO.findProdavacByManifestacija(manifestacija.getId());
+
+                    String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk"
+                            +"lmnopqrstuvwxyz!@#$%&";
+                    Random rnd = new Random();
+                    StringBuilder sb = new StringBuilder(10);
+                    for (int i2 = 0; i2 < 10; i2++)
+                        sb.append(chars.charAt(rnd.nextInt(chars.length())));
+
+                    Karta karta = new Karta(sb.toString(), manifestacija.getId(), manifestacija.getDatumIVremeOdrzavanja(),
+                            shoppingCartItem.getUkupnaCena(), StatusKarte.REZERVISANA, shoppingCartItem.getTipKarte(),
+                            false, ulogovanKupac.getKorisnickoIme(), prodavac.getKorisnickoIme());
+                    kartaDAO.dodajKartu(karta);
+                    korisnikDAO.dodajKarteKupcu(karta.getId(), ulogovanKupac.getKorisnickoIme());
+                    korisnikDAO.dodajKarteProdavcu(karta.getId(), prodavac.getKorisnickoIme());
+                }
+            }
+
+            shoppingCartItems.clear();
+            return "Done";
         });
 
     }
