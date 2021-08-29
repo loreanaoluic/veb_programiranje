@@ -12,7 +12,8 @@ Vue.component("pocetna-strana", {
 				kriterijumSortiranja: "NAZIV",
 				tip: "SVE",
 				opadajuce: false,
-				rasprodata: false
+				rasprodata: false,
+				korisnik: {}
 			}
 		}
 	},
@@ -68,6 +69,13 @@ Vue.component("pocetna-strana", {
                               {{ manifestacija.datumIVremeOdrzavanja.time.hour}}:{{ manifestacija.datumIVremeOdrzavanja.time.minute}}</p>
                           <p><i>REGULAR karta: {{ manifestacija.cenaRegular }} din</i></p>
                           <p><button type="button" class="btn btn-info" v-on:click="prikaziInformacije(manifestacija)">Više informacija</button></p>
+                          <div v-if="(korisnik !== null)">
+						  	<div v-if="(korisnik.uloga === 'ADMIN')">
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info" v-on:click="prikaziKarte(manifestacija)">Karte</button>
+								</div>
+							</div>
+						  </div>
                         </div>
                     </div>
                 </div>
@@ -78,6 +86,7 @@ Vue.component("pocetna-strana", {
 `
 	,
 	mounted(){
+		this.korisnik = JSON.parse(localStorage.getItem('korisnik'))
 		let data = this;
 		axios.get('/manifestacije', this.data)
 			.then(function (response) {
@@ -115,6 +124,13 @@ Vue.component("pocetna-strana", {
 
 		closeNav : function () {
 			document.getElementById("mySidebar").style.width = "0";
+		},
+		prikaziKarte : function (manifestacija) {
+			axios.get('/karte')
+				.then(function (response) {
+					localStorage.setItem('manifestacija', JSON.stringify(manifestacija))
+					window.location.href = "#/karte-za-manifestaciju";
+				})
 		}
 }
 

@@ -54,4 +54,14 @@ public class KartaDAO {
         }
         return karte;
     }
+
+    public ArrayList<Karta> findKarteByManifestacija(int manifestacija) {
+        ArrayList<Karta> karte = new ArrayList<>();
+        for (Karta karta : listaKarata) {
+            if (karta.getManifestacija() == manifestacija) {
+                karte.add(karta);
+            }
+        }
+        return karte;
+    }
 }

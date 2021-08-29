@@ -288,7 +288,13 @@ public class Main {
 
         get("/karte/:id", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
-            return g.toJson(kartaDAO.findKarteByManifestacijaAndProdavacAndRezervisana(id, ulogovanProdavac.getKorisnickoIme()));
+            if (ulogovanKorisnik.getUloga().equals(Uloga.PRODAVAC)) {
+                return g.toJson(kartaDAO.findKarteByManifestacijaAndProdavacAndRezervisana(id, ulogovanProdavac.getKorisnickoIme()));
+            }
+            else if (ulogovanKorisnik.getUloga().equals(Uloga.ADMIN)) {
+                return g.toJson(kartaDAO.findKarteByManifestacija(id));
+            }
+            return "Error";
         });
 
     }
