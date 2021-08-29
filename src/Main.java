@@ -372,8 +372,12 @@ public class Main {
             return ukupnaCena;
         });
 
+        post("/karte/cenaSaPopustom", (req, res) -> {
+            double cena = Double.parseDouble(req.queryParams("cena").trim());
+            return tipKupcaDAO.izracunajCenuSaPopustom(ulogovanKupac.getTip(), cena);
+        });
+
         post("/karte/rezervisi", (req, res) -> {
-            Double cena = Double.parseDouble(req.queryParams("cena").trim());
 
             for (ShoppingCartItem shoppingCartItem : shoppingCartItems) {
                 for (int i = 0; i < shoppingCartItem.getKolicina(); i++) {
@@ -391,14 +395,30 @@ public class Main {
                             shoppingCartItem.getUkupnaCena(), StatusKarte.REZERVISANA, shoppingCartItem.getTipKarte(),
                             false, ulogovanKupac.getKorisnickoIme(), prodavac.getKorisnickoIme());
                     kartaDAO.dodajKartu(karta);
-                    korisnikDAO.dodajKarteKupcu(karta.getId(), ulogovanKupac.getKorisnickoIme());
-                    korisnikDAO.dodajKarteProdavcu(karta.getId(), prodavac.getKorisnickoIme());
+                    korisnikDAO.dodajKarteKupcu(karta.getId(), ulogovanKupac);
+                    korisnikDAO.dodajKarteProdavcu(karta.getId(), prodavac);
+                    korisnikDAO.dodajBodoveKupcu(ulogovanKupac, shoppingCartItem.getUkupnaCena());
+                    tipKupcaDAO.azurirajTip(ulogovanKupac);
+                    korisnikDAO.sacuvajKorisnike();
                 }
             }
+            shoppingCartItems.clear();
+            return g.toJson(ulogovanKupac);
+        });
 
+        post("/karte/odustani", (req, res) -> {
             shoppingCartItems.clear();
             return "Done";
         });
 
+        post("/karte/obrisi/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            for (int i = 0; i < shoppingCartItems.size(); i++) {
+                if (shoppingCartItems.get(i).getId() == id) {
+                    shoppingCartItems.remove(i);
+                }
+            }
+            return "Done";
+        });
     }
 }

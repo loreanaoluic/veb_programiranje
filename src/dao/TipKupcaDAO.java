@@ -1,5 +1,6 @@
 package dao;
 
+import model.Kupac;
 import model.TipKupca;
 
 import java.io.BufferedReader;
@@ -37,5 +38,21 @@ public class TipKupcaDAO {
             }
         }
         return null;
+    }
+
+    public double izracunajCenuSaPopustom(int tip, double staraCena) {
+        TipKupca tipKupca = findTipKupca(tip);
+        double popust = staraCena * tipKupca.getPopust();
+        return staraCena - popust;
+    }
+
+    public void azurirajTip (Kupac kupac) {
+        for (TipKupca tipKupca : listaTipovaKupaca) {
+            if (kupac.getBrojBodova() > tipKupca.getBodovi()) {
+                kupac.setTip(tipKupca.getId());
+            } else {
+                return;
+            }
+        }
     }
 }

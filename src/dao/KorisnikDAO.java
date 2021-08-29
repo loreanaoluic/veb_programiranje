@@ -289,19 +289,23 @@ public class KorisnikDAO {
         return pronadjene;
     }
 
-    public void dodajKarteProdavcu(String karta, String prodavac) throws IOException {
-        Prodavac p = findProdavacByUsername(prodavac);
-        List<String> karte = p.getKarte();
+    public void dodajKarteProdavcu(String karta, Prodavac prodavac) throws IOException {
+        List<String> karte = prodavac.getKarte();
         karte.add(karta);
-        p.setKarte(karte);
+        prodavac.setKarte(karte);
         sacuvajKorisnike();
     }
 
-    public void dodajKarteKupcu(String karta, String kupac) throws IOException {
-        Kupac k = findKupacByUsername(kupac);
-        List<String> karte = k.getKarte();
+    public void dodajKarteKupcu(String karta, Kupac kupac) throws IOException {
+        List<String> karte = kupac.getKarte();
         karte.add(karta);
-        k.setKarte(karte);
+        kupac.setKarte(karte);
+        sacuvajKorisnike();
+    }
+
+    public void dodajBodoveKupcu(Kupac kupac, double cena) throws IOException {
+        double c = kupac.getBrojBodova() + cena / 1000 * 133;
+        kupac.setBrojBodova((int) c);
         sacuvajKorisnike();
     }
 }
