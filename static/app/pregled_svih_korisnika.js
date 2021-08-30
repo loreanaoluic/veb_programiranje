@@ -17,7 +17,7 @@ Vue.component("pregled-svih-korisnika", {
     <div class="main-body">  
           <button class="openbtn" v-on:click="openNav()">&#9776; Filter</button>
           <div class="row gutters-sm">
-            <div class="col-sm-5 mb-3" v-for="korisnik in korisnici" :key="korisnik.korisnickoIme">
+            <div class="col-sm-4" v-for="korisnik in korisnici" :key="korisnik.korisnickoIme">
                 <div class="card">
                     <div class="card-body">
                           <div class="d-flex flex-column align-items-center text-center">

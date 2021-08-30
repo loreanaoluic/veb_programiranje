@@ -7,12 +7,14 @@ import model.enums.TipKarte;
 import model.enums.Uloga;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static spark.Spark.*;
 
@@ -420,5 +422,29 @@ public class Main {
             }
             return "Done";
         });
+
+        post("/karte/odustani/:id", (req, res) -> {
+            String id = req.params("id");
+            Karta karta = kartaDAO.findKartaById(id);
+
+            Calendar cal = Calendar.getInstance();
+            cal.clear();
+            cal.set(karta.getDatumIVremeManifestacije().getYear(),
+                    karta.getDatumIVremeManifestacije().getMonthValue()-1,
+                    karta.getDatumIVremeManifestacije().getDayOfMonth());
+            cal.add(Calendar.DATE, -7);
+
+            if (System.currentTimeMillis() > cal.getTimeInMillis()) {
+                return "Error";
+            }
+
+            ArrayList<Karta> karte = kartaDAO.odustaniOdKarte(karta, ulogovanKupac);
+            tipKupcaDAO.azurirajTip(ulogovanKupac);
+            korisnikDAO.sacuvajKorisnike();
+
+            return g.toJson(karte);
+        });
+
+        post("/karte/osvezi", (req, res) -> g.toJson(ulogovanKupac));
     }
 }

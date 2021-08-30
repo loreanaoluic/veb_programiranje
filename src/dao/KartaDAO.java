@@ -1,6 +1,8 @@
 package dao;
 
 import model.Karta;
+import model.Kupac;
+import model.Lokacija;
 import model.Manifestacija;
 import model.enums.StatusKarte;
 import model.enums.TipKarte;
@@ -138,7 +140,30 @@ public class KartaDAO {
         listaKarata.add(karta);
     }
 
-    public void rezervisiKarte() {
+    public void sacuvajKarte() throws IOException {
+        FileWriter f = new FileWriter("data/karte.csv", false);
+        for (Karta karta : listaKarata) {
+            f.append(karta.getId()).append(",")
+                    .append(String.valueOf(karta.getManifestacija())).append(",")
+                    .append(String.valueOf(karta.getDatumIVremeManifestacije())).append(",")
+                    .append(String.valueOf(karta.getCena())).append(",")
+                    .append(String.valueOf(karta.getStatusKarte())).append(",")
+                    .append(String.valueOf(karta.getTipKarte())).append(",")
+                    .append(String.valueOf(karta.isObrisana())).append(",")
+                    .append(String.valueOf(karta.getKupac())).append(",")
+                    .append(String.valueOf(karta.getProdavac())).append("\n");
+        }
+        f.flush();
+        f.close();
+    }
 
+    public ArrayList<Karta> odustaniOdKarte(Karta karta, Kupac kupac) throws IOException {
+        karta.setStatusKarte(StatusKarte.ODUSTANAK);
+        sacuvajKarte();
+
+        int stariBodovi = kupac.getBrojBodova();
+        kupac.setBrojBodova((int) (stariBodovi - karta.getCena() / 1000 * 133 * 4));
+
+        return listaKarata;
     }
 }

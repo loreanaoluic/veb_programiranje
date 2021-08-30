@@ -8,7 +8,7 @@ Vue.component("manifestacije-prodavca", {
 <div class="container">
     <div class="main-body">  
           <div class="row gutters-sm">
-            <div class="col-sm-5 mb-3" v-for="manifestacija in manifestacije" :key="manifestacija.id">
+            <div class="col-sm-4" v-for="manifestacija in manifestacije" :key="manifestacija.id">
                 <div class="card">
                     <div class="card-body">
                           <div class="d-flex flex-column align-items-center text-center">

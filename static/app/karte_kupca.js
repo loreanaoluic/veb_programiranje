@@ -25,14 +25,23 @@ Vue.component("karte-kupca", {
             <div class="col-sm-5 mb-3" v-for="karta in karte" :key="karta.id">
                 <div class="karte">
                     <div class="card-body">
-                          <div class="d-flex flex-column align-items-center text-center"><br>
-                          <b class="material-icons text-info mr-2"> {{ manifestacije[karta.manifestacija].naziv }} </b>  
-                          <i>Datum i vreme održavanja: {{ karta.datumIVremeManifestacije.date.day }}.{{ karta.datumIVremeManifestacije.date.month }}.{{ karta.datumIVremeManifestacije.date.year }}. u 
+                          <div class="d-flex flex-column">
+                          <br>
+                          <div v-if="(karta.statusKarte === 'ODUSTANAK')">
+                            <br>
+                          </div>
+                          <b style="text-align: center" class="material-icons text-info mr-2"> 
+                              <div v-if="(karta.statusKarte === 'REZERVISANA')">
+                                  <button class="odustanak" v-on:click="odustani(karta)">Odustani</button>
+                              </div>
+                            {{ manifestacije[karta.manifestacija].naziv }} 
+                          </b>  
+                          <i style="text-align: center">Datum i vreme održavanja: {{ karta.datumIVremeManifestacije.date.day }}.{{ karta.datumIVremeManifestacije.date.month }}.{{ karta.datumIVremeManifestacije.date.year }}. u 
                               {{ karta.datumIVremeManifestacije.time.hour}}:{{ karta.datumIVremeManifestacije.time.minute }} </i>
-                          <i> Status: {{ karta.statusKarte }}</i>
-                          <b> Cena: {{ karta.cena }} </b>
-                          <i style="font-size:12px"> Tip karte: {{ karta.tipKarte }}</i>
-                          <i class="material-icons text-info mr-2"> Prodavac: {{ karta.prodavac }} </i><br>
+                          <i style="text-align: center"> Status: {{ karta.statusKarte }}</i>
+                          <b style="text-align: center"> Cena: {{ karta.cena }} </b>
+                          <i class="tipKarte"> Tip karte: {{ karta.tipKarte }}</i>
+                          <br>
                         </div>
                     </div>
                 </div>
@@ -119,6 +128,22 @@ Vue.component("karte-kupca", {
 
         closeNav : function () {
             document.getElementById("mySidebar").style.width = "0";
+        },
+        odustani : function (karta) {
+            let data = this;
+            axios.post('/karte/odustani/' + karta.id)
+                .then(function (response) {
+                    if (response.data === "Error") {
+                        alert("Odustanak je moguć najkasnije 7 dana do početka manifestacije!");
+                    } else {
+                        data.karte = response.data;
+                        axios.post('/karte/osvezi')
+                            .then(function (response) {
+                                localStorage.setItem('korisnik', JSON.stringify(response.data))
+                                window.location.reload();
+                            })
+                    }
+                })
         }
     }
 

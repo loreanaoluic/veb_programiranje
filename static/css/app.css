@@ -50,6 +50,7 @@
     padding: 0;
     border: none;
     background: none;
+    float: right;
 }
 
 body{
@@ -136,4 +137,25 @@ label {
 a {
     color: blue;
     text-decoration: underline;
+}
+
+.odustanak {
+    background-color: red;
+    border: none;
+    color: white;
+    margin-right: 60px;
+    margin-left: 344px;
+    font-size: 12px;
+    margin-top: 5px;;
+}
+
+.tipKarte {
+    text-align: center;
+    font-size:12px;
+}
+
+.prikaz_card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
