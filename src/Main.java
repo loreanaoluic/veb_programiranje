@@ -281,15 +281,24 @@ public class Main {
                     LocalDateTime.parse((CharSequence) mapa.get("datumIVremeOdrzavanja")), Double.parseDouble((String) mapa.get("cenaRegular")), false, lokacija.getId(),
                     (String) mapa.get("poster"), false);
 
-            for (Lokacija l : LokacijaDAO.listaLokacija) {
+            for (Lokacija l : lokacijaDAO.getNeobrisaneLokacije()) {
                 if (l.getAdresa().equals(lokacija.getAdresa())) {
                     for (Manifestacija m : manifestacijaDAO.getNeobrisaneManifestacije()) {
-                        if (m.getDatumIVremeOdrzavanja().equals(manifestacija.getDatumIVremeOdrzavanja())
-                        && m.getLokacija() == l.getId()) {
+                        if (m.getDatumIVremeOdrzavanja().getYear() == manifestacija.getDatumIVremeOdrzavanja().getYear()
+                                && m.getDatumIVremeOdrzavanja().getMonth() == manifestacija.getDatumIVremeOdrzavanja().getMonth()
+                                && m.getDatumIVremeOdrzavanja().getDayOfMonth() == manifestacija.getDatumIVremeOdrzavanja().getDayOfMonth()
+                                && m.getLokacija() == l.getId()) {
                             return "Već postoji manifestacija na željenoj lokaciji u to vreme!";
                         }
                     }
                 }
+            }
+
+            ZonedDateTime zdt1 = ZonedDateTime.of(manifestacija.getDatumIVremeOdrzavanja(), ZoneId.systemDefault());
+            long date = zdt1.toInstant().toEpochMilli();
+
+            if (date < System.currentTimeMillis()) {
+                return "Odabrani datum je u prošlosti!";
             }
 
             lokacijaDAO.dodajLokaciju(lokacija);
@@ -311,15 +320,43 @@ public class Main {
             return manifestacija;
         });
 
-        post("/manifestacije/izmenaManifestacije/:id", (req, res) -> {
+        post("/manifestacije/izmenaManifestacije/:id/:idLokacije", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
+            int idLokacije = Integer.parseInt(req.params("idLokacije"));
             var mapa = g.fromJson(req.body(), HashMap.class);
 
-            Manifestacija novaManifestacija = new Manifestacija(id, String.valueOf(mapa.get("naziv")), String.valueOf(mapa.get("tipManifestacije")),
-                   Integer.parseInt(String.valueOf(mapa.get("brojMesta"))), LocalDateTime.parse(String.valueOf(mapa.get("datumIVremeOdrzavanja"))),
-                    Double.parseDouble(String.valueOf(mapa.get("cenaRegular"))), Boolean.parseBoolean(String.valueOf(mapa.get("status"))),
-                    0, String.valueOf(mapa.get("poster")), false);
+            double broj = Double.parseDouble(String.valueOf(mapa.get("brojMesta")));
 
+            Lokacija novaLokacija = new Lokacija(idLokacije, Double.parseDouble(String.valueOf(mapa.get("geografskaSirina"))),
+                    Double.parseDouble(String.valueOf(mapa.get("geografskaDuzina"))), (String) mapa.get("adresa"),false);
+
+            Manifestacija novaManifestacija = new Manifestacija(id, String.valueOf(mapa.get("naziv")), String.valueOf(mapa.get("tipManifestacije")),
+                    (int)broj, LocalDateTime.parse(String.valueOf(mapa.get("datumIVremeOdrzavanja"))),
+                    Double.parseDouble(String.valueOf(mapa.get("cenaRegular"))), Boolean.parseBoolean(String.valueOf(mapa.get("status"))),
+                    idLokacije, String.valueOf(mapa.get("poster")), false);
+
+
+            for (Lokacija l : lokacijaDAO.getNeobrisaneLokacije()) {
+                if (l.getAdresa().equals(novaLokacija.getAdresa()) && l.getId() != idLokacije) {
+                    for (Manifestacija m : manifestacijaDAO.getNeobrisaneManifestacije()) {
+                        if (m.getDatumIVremeOdrzavanja().getYear() == novaManifestacija.getDatumIVremeOdrzavanja().getYear()
+                                && m.getDatumIVremeOdrzavanja().getMonth() == novaManifestacija.getDatumIVremeOdrzavanja().getMonth()
+                                && m.getDatumIVremeOdrzavanja().getDayOfMonth() == novaManifestacija.getDatumIVremeOdrzavanja().getDayOfMonth()
+                                && m.getLokacija() == l.getId()) {
+                            return -2;
+                        }
+                    }
+                }
+            }
+
+            ZonedDateTime zdt1 = ZonedDateTime.of(novaManifestacija.getDatumIVremeOdrzavanja(), ZoneId.systemDefault());
+            long date = zdt1.toInstant().toEpochMilli();
+
+            if (date < System.currentTimeMillis()) {
+                return -1;
+            }
+
+            lokacijaDAO.izmeniLokaciju(novaLokacija);
             return manifestacijaDAO.izmeniManifestaciju(novaManifestacija);
 
         });

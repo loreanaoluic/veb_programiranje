@@ -4,10 +4,12 @@ Vue.component("manifestacija", {
             manifestacija: {},
             aktivna: "",
             korisnik: {},
-            input: {},
+            input: {
+                geografskaSirina: 45.2673,
+                geografskaDuzina: 19.8339
+            },
             lokacija: {},
             poster: "",
-            novaLokacija: {},
             rezervacija: {
                 tipKarte: "REGULAR"
             }
@@ -42,7 +44,7 @@ Vue.component("manifestacija", {
         </div>
          <div v-if="(korisnik.uloga === 'PRODAVAC')">
             <div class="modal-footer">
-                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#IzmeniModal">Izmeni</button>
+                <button type="button" class="btn btn-info" v-on:click="izmeniManifestaciju()">Izmeni</button>
             </div>
         </div>
         <div v-if="(korisnik.uloga === 'KUPAC')">
@@ -81,55 +83,8 @@ Vue.component("manifestacija", {
           </div>
         </div>
       </div>
-    
-    <div class="modal fade" id="IzmeniModal" tabindex="-1" aria-labelledby="IzmeniModal" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="IzmeniModal">Izmeni manifestaciju</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-               <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="modal-body text-start">
-                <form>
-                  <div class="form-group">
-                    <input type="text" class="form-control" v-model="input.naziv" placeholder="Naziv">
-                  </div>
-                  <div class="form-group">
-                    <input type="text" class="form-control" v-model="input.tipManifestacije" placeholder="Tip manifestacije">
-                  </div>
-                  <div class="form-group">
-                    <input type="number" class="form-control" v-model="input.brojMesta" placeholder="Broj mesta">
-                  </div>
-                  <div class="form-group">
-                    <div class="form-control">
-                        <label>Datum i vreme</label>
-                        <input type="datetime-local" name="datumIVremeOdrzavanja" v-model="input.datumIVremeOdrzavanja" class="labele">
-                    </div>
-                  </div>
-                   <div class="form-group">
-                    <input type="number" class="form-control" v-model="input.cenaRegular" placeholder="Cena regular karte">
-                  </div>
-                  <div class="form-group">
-                    <input type="text" class="form-control" v-model="novaLokacija.adresa" placeholder="Adresa">
-                  </div>
-                   <div class="form-group">
-                    <div class="form-control">
-                        <label>Poster</label>
-                        <input type="file" class="labele" id="poster" name="poster" multiple v-on:change="posterDodat()">
-                    </div>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" v-on:click="potvrdi">Potvrdi</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      
        <div class="modal fade" id="RezervisiModal" tabindex="-1" aria-labelledby="RezervisiModal" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -177,19 +132,13 @@ Vue.component("manifestacija", {
         axios.get('/manifestacije/' + this.manifestacija.id, this.data)
             .then(function (response) {
                 data.lokacija = response.data;
-                data.novaLokacija.adresa = data.lokacija.adresa;
-                data.novaLokacija.geografskaSirina = data.lokacija.geografskaSirina;
-                data.novaLokacija.geografskaDuzina = data.lokacija.geografskaDuzina;
+                localStorage.setItem('lokacija', JSON.stringify(response.data));
             })
         if (this.manifestacija.status === true) {
             this.aktivna = "AKTIVNA";
         } else {
             this.aktivna = "NEAKTIVNA";
         }
-        this.input.naziv = this.manifestacija.naziv;
-        this.input.tipManifestacije = this.manifestacija.tipManifestacije;
-        this.input.cenaRegular = this.manifestacija.cenaRegular;
-        this.input.poster = this.manifestacija.poster;
     }
     ,
     methods : {
@@ -201,28 +150,11 @@ Vue.component("manifestacija", {
                     data.manifestacija = response.data;
                 })
         },
-        posterDodat : function() {
-            var name = document.getElementById('poster');
-            this.input.poster = "images/manifestacije/" + name.files.item(0).name;
-        },
-        potvrdi : function() {
-            let data = this;
-            console.log(this.input.datumIVremeOdrzavanja);
-            if (this.input.naziv === "" || this.input.tipManifestacije === "" || this.input.brojMesta === "" || this.input.brojMesta === undefined
-                || this.input.datumIVremeOdrzavanja === undefined || this.input.cenaRegular === "" || this.input.adresa === ""
-                || this.input.geografskaSirina === "" || this.input.geografskaDuzina === "" || this.input.poster === "") {
-                alert("Ispunite ispravno sva polja!");
-            } else {
-                axios.post('/manifestacije/izmenaManifestacije/' + this.manifestacija.id, this.input)
-                    .then(function (response) {
-                        data.manifestacija = response.data;
-                        window.location.href = "#/";
-                        window.location.reload();
-                    })
-            }
+        izmeniManifestaciju : function() {
+            window.location.href = "#/izmena-manifestacije";
+            window.location.reload();
         },
         rezervisi : function() {
-            let data = this;
             if (this.rezervacija.kolicina === "" || this.rezervacija.kolicina === "0" || this.rezervacija.tipKarte === "") {
                 alert("Ispunite ispravno sva polja!");
             } else {

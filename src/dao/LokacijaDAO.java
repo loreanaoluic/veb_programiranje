@@ -47,8 +47,8 @@ public class LokacijaDAO {
         file.append(String.valueOf(lokacija.getId())).append(",")
                 .append(String.valueOf(lokacija.getGeografskaSirina())).append(",")
                 .append(String.valueOf(lokacija.getGeografskaDuzina())).append(",")
-                .append(lokacija.getAdresa());
-        file.append("\n");
+                .append(lokacija.getAdresa()).append(",")
+                .append(String.valueOf(lokacija.isObrisana())).append("\n");
         file.flush();
         file.close();
 
