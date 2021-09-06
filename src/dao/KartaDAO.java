@@ -42,8 +42,18 @@ public class KartaDAO {
         }
     }
 
+    public ArrayList<Karta> getNeobrisaneKarte() {
+        ArrayList<Karta> karte = new ArrayList<>();
+        for (Karta k : listaKarata) {
+            if (!k.isObrisana()) {
+                karte.add(k);
+            }
+        }
+        return karte;
+    }
+
     public Karta findKartaById(String id) {
-        for (Karta karta : listaKarata) {
+        for (Karta karta : getNeobrisaneKarte()) {
             if (karta.getId().equals(id)) {
                 return karta;
             }
@@ -53,7 +63,7 @@ public class KartaDAO {
 
     public ArrayList<Karta> findKarteByManifestacijaAndProdavacAndRezervisana(int manifestacija, String prodavac) {
         ArrayList<Karta> karte = new ArrayList<>();
-        for (Karta karta : listaKarata) {
+        for (Karta karta : getNeobrisaneKarte()) {
             if (karta.getManifestacija() == manifestacija && karta.getProdavac().equals(prodavac) &&
                     karta.getStatusKarte().equals(StatusKarte.REZERVISANA)) {
                 karte.add(karta);
@@ -64,7 +74,7 @@ public class KartaDAO {
 
     public ArrayList<Karta> findKarteByManifestacija(int manifestacija) {
         ArrayList<Karta> karte = new ArrayList<>();
-        for (Karta karta : listaKarata) {
+        for (Karta karta : getNeobrisaneKarte()) {
             if (karta.getManifestacija() == manifestacija) {
                 karte.add(karta);
             }
@@ -74,7 +84,7 @@ public class KartaDAO {
 
     public ArrayList<Karta> findKarteByKupac(String kupac) {
         ArrayList<Karta> karte = new ArrayList<>();
-        for (Karta karta : listaKarata) {
+        for (Karta karta : getNeobrisaneKarte()) {
             if (karta.getKupac().equals(kupac)) {
                 karte.add(karta);
             }
@@ -87,7 +97,7 @@ public class KartaDAO {
                                              boolean opadajuce, ManifestacijaDAO manifestacijaDAO) {
 
         ArrayList<Karta> pronadjene = new ArrayList<>();
-        for(Karta k : listaKarata) {
+        for(Karta k : getNeobrisaneKarte()) {
 
             String manifestacija = manifestacijaDAO.findManifestacijaById(k.getManifestacija()).getNaziv();
             long datumM = Timestamp.valueOf(k.getDatumIVremeManifestacije()).getTime();
@@ -164,6 +174,41 @@ public class KartaDAO {
         int stariBodovi = kupac.getBrojBodova();
         kupac.setBrojBodova((int) (stariBodovi - karta.getCena() / 1000 * 133 * 4));
 
-        return listaKarata;
+        return getNeobrisaneKarte();
+    }
+
+    public Karta obrisiKartu(String id) throws IOException {
+        Karta karta = findKartaById(id);
+        karta.setObrisana(true);
+        sacuvajKarte();
+
+        return karta;
+    }
+
+    public void obrisiKarteZaManifestaciju(int idManifestacije) throws IOException {
+        for (Karta k : getNeobrisaneKarte()) {
+            if (k.getManifestacija() == idManifestacije) {
+                k.setObrisana(true);
+            }
+        }
+        sacuvajKarte();
+    }
+
+    public void obrisiKarteZaKupca(String korisnickoIme) throws IOException {
+        for (Karta k : getNeobrisaneKarte()) {
+            if (k.getKupac().equals(korisnickoIme)) {
+                k.setObrisana(true);
+            }
+        }
+        sacuvajKarte();
+    }
+
+    public void obrisiKarteZaProdavca(String korisnickoIme) throws IOException {
+        for (Karta k : getNeobrisaneKarte()) {
+            if (k.getProdavac().equals(korisnickoIme)) {
+                k.setObrisana(true);
+            }
+        }
+        sacuvajKarte();
     }
 }

@@ -3,10 +3,6 @@ Vue.component("manifestacija", {
         return {
             manifestacija: {},
             aktivna: "",
-            mapPosition: {
-                latitude: 45.267136,
-                longitude: 19.833549
-            },
             korisnik: {},
             input: {},
             lokacija: {},
@@ -54,9 +50,37 @@ Vue.component("manifestacija", {
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RezervisiModal">Rezerviši kartu na vreme!</button>
             </div>
         </div>
+         <div v-if="(korisnik.uloga === 'ADMIN')">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ObrisiModal">Obriši</button>
+            </div>
+        </div>
     </div>
-    <div class="col map" id="map">
-    </div>
+    
+     <div class="modal fade" id="ObrisiModal" tabindex="-1" aria-labelledby="ObrisiModal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ObrisiModal">Obriši manifestaciju</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-body text-start">
+                <form>
+                  <div class="form-group">
+                    <p> Da li ste sigurni da želite da obrišete manifestaciju?</p>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" v-on:click="obrisi">Potvrdi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     
     <div class="modal fade" id="IzmeniModal" tabindex="-1" aria-labelledby="IzmeniModal" aria-hidden="true">
         <div class="modal-dialog">
@@ -156,7 +180,6 @@ Vue.component("manifestacija", {
                 data.novaLokacija.adresa = data.lokacija.adresa;
                 data.novaLokacija.geografskaSirina = data.lokacija.geografskaSirina;
                 data.novaLokacija.geografskaDuzina = data.lokacija.geografskaDuzina;
-                data.prikaziMapu();
             })
         if (this.manifestacija.status === true) {
             this.aktivna = "AKTIVNA";
@@ -165,34 +188,11 @@ Vue.component("manifestacija", {
         }
         this.input.naziv = this.manifestacija.naziv;
         this.input.tipManifestacije = this.manifestacija.tipManifestacije;
-        this.input.brojMesta = this.manifestacija.brojMesta;
         this.input.cenaRegular = this.manifestacija.cenaRegular;
         this.input.poster = this.manifestacija.poster;
     }
     ,
     methods : {
-        prikaziMapu : function() {
-            let self = this;
-            self.mapPosition.latitude = parseFloat(this.lokacija.geografskaSirina);
-            self.mapPosition.longitude = parseFloat(this.lokacija.geografskaDuzina);
-            self.lokacija.geografskaSirina = self.mapPosition.latitude;
-            self.lokacija.geografskaDuzina = self.mapPosition.longitude;
-
-            let map = new ol.Map({
-                target: 'map',
-                interactions: [],
-                controls: [],
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([self.mapPosition.longitude, self.mapPosition.latitude]),
-                    zoom: 17
-                })
-            });
-        },
         aktivno : function() {
             this.aktivna = "AKTIVNA";
             let data = this;
@@ -208,7 +208,7 @@ Vue.component("manifestacija", {
         potvrdi : function() {
             let data = this;
             console.log(this.input.datumIVremeOdrzavanja);
-            if (this.input.naziv === "" || this.input.tipManifestacije === "" || this.input.brojMesta === ""
+            if (this.input.naziv === "" || this.input.tipManifestacije === "" || this.input.brojMesta === "" || this.input.brojMesta === undefined
                 || this.input.datumIVremeOdrzavanja === undefined || this.input.cenaRegular === "" || this.input.adresa === ""
                 || this.input.geografskaSirina === "" || this.input.geografskaDuzina === "" || this.input.poster === "") {
                 alert("Ispunite ispravno sva polja!");
@@ -236,6 +236,11 @@ Vue.component("manifestacija", {
                         }
                     })
             }
+        },
+        obrisi : function() {
+            axios.post('/manifestacije/obrisi/' + this.manifestacija.id)
+            window.location.href = "#/";
+            window.location.reload();
         }
     }
 

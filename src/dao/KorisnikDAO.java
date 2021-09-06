@@ -2,8 +2,6 @@ package dao;
 
 import model.*;
 import model.enums.Pol;
-import model.enums.StatusKarte;
-import model.enums.TipKarte;
 import model.enums.Uloga;
 import sort.*;
 
@@ -12,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +94,46 @@ public class KorisnikDAO {
         }
     }
 
+    public ArrayList<Korisnik> getNeobrisaneKorisnike() {
+        ArrayList<Korisnik> korisnici = new ArrayList<>();
+        for (Korisnik k : listaSvihKorisnika) {
+            if (!k.getObrisan()) {
+                korisnici.add(k);
+            }
+        }
+        return korisnici;
+    }
+
+    public ArrayList<Kupac> getNeobrisaneKupce() {
+        ArrayList<Kupac> kupci = new ArrayList<>();
+        for (Kupac k : listaKupaca) {
+            if (!k.getObrisan()) {
+                kupci.add(k);
+            }
+        }
+        return kupci;
+    }
+
+    public ArrayList<Korisnik> getNeobrisaneAdmine() {
+        ArrayList<Korisnik> admini = new ArrayList<>();
+        for (Korisnik k : listaAdmina) {
+            if (!k.getObrisan()) {
+                admini.add(k);
+            }
+        }
+        return admini;
+    }
+
+    public ArrayList<Prodavac> getNeobrisaneProdavce() {
+        ArrayList<Prodavac> prodavci = new ArrayList<>();
+        for (Prodavac p : listaProdavaca) {
+            if (!p.getObrisan()) {
+                prodavci.add(p);
+            }
+        }
+        return prodavci;
+    }
+
     public Korisnik findUserByUsernameAndPassword(String korisnickoIme, String lozinka) {
         for (Korisnik k : listaSvihKorisnika) {
             if (k.getKorisnickoIme().equals(korisnickoIme) && k.getLozinka().equals(lozinka)) {
@@ -107,7 +144,7 @@ public class KorisnikDAO {
     }
 
     public Korisnik findUserByUsername(String korisnickoIme) {
-        for (Korisnik k : listaSvihKorisnika) {
+        for (Korisnik k : getNeobrisaneKorisnike()) {
             if (k.getKorisnickoIme().equals(korisnickoIme)) {
                 return k;
             }
@@ -116,7 +153,7 @@ public class KorisnikDAO {
     }
 
     public Kupac findKupacByUsername(String korisnickoIme) {
-        for (Kupac k : listaKupaca) {
+        for (Kupac k : getNeobrisaneKupce()) {
             if (k.getKorisnickoIme().equals(korisnickoIme)) {
                 return k;
             }
@@ -125,7 +162,7 @@ public class KorisnikDAO {
     }
 
     public Prodavac findProdavacByUsername(String korisnickoIme) {
-        for (Prodavac k : listaProdavaca) {
+        for (Prodavac k : getNeobrisaneProdavce()) {
             if (k.getKorisnickoIme().equals(korisnickoIme)) {
                 return k;
             }
@@ -134,7 +171,7 @@ public class KorisnikDAO {
     }
 
     public Prodavac findProdavacByManifestacija(int manifestacija) {
-        for (Prodavac p : listaProdavaca) {
+        for (Prodavac p : getNeobrisaneProdavce()) {
             for (int m : p.getManifestacije()) {
                 if (m == manifestacija) {
                     return p;
@@ -261,7 +298,7 @@ public class KorisnikDAO {
                                              String uloga, boolean opadajuce) {
 
         ArrayList<Korisnik> pronadjene = new ArrayList<>();
-        for(Korisnik k : listaSvihKorisnika) {
+        for(Korisnik k : getNeobrisaneKorisnike()) {
 
             if(k.getIme().toUpperCase().contains(ime.toUpperCase()) &&
                     k.getPrezime().toUpperCase().contains(prezime.toUpperCase()) &&
@@ -307,5 +344,22 @@ public class KorisnikDAO {
         double c = kupac.getBrojBodova() + cena / 1000 * 133;
         kupac.setBrojBodova((int) c);
         sacuvajKorisnike();
+    }
+
+    public Korisnik obrisiKorisnika(String korisnickoIme) throws IOException {
+        Korisnik korisnik = findUserByUsername(korisnickoIme);
+        korisnik.setObrisan(true);
+        if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+            Kupac kupac = findKupacByUsername(korisnickoIme);
+            kupac.setObrisan(true);
+        } else if (korisnik.getUloga().equals(Uloga.ADMIN)) {
+            korisnik.setObrisan(true);
+        } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+            Prodavac prodavac = findProdavacByUsername(korisnickoIme);
+            prodavac.setObrisan(true);
+        }
+        sacuvajKorisnike();
+
+        return korisnik;
     }
 }

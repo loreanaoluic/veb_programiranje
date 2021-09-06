@@ -1,5 +1,6 @@
 package dao;
 
+import model.Karta;
 import model.Manifestacija;
 import sort.ManifestacijaPoCeni;
 import sort.ManifestacijaPoDatumuIVremenu;
@@ -10,11 +11,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class ManifestacijaDAO {
     public static ArrayList<Manifestacija> listaManifestacija = new ArrayList<>();
@@ -42,6 +45,16 @@ public class ManifestacijaDAO {
         return listaManifestacija;
     }
 
+    public ArrayList<Manifestacija> getNeobrisaneManifestacije() {
+        ArrayList<Manifestacija> manifestacije = new ArrayList<>();
+        for (Manifestacija m : listaManifestacija) {
+            if (!m.isObrisana()) {
+                manifestacije.add(m);
+            }
+        }
+        return manifestacije;
+    }
+
     public HashMap<Integer, Manifestacija> getMapaManifestacija() {
         HashMap<Integer, Manifestacija> mapa = new HashMap<Integer, Manifestacija>();
         for (Manifestacija manifestacija : listaManifestacija) {
@@ -50,8 +63,16 @@ public class ManifestacijaDAO {
         return mapa;
     }
 
+    public HashMap<Integer, Manifestacija> getMapaNeobrisaneManifestacija() {
+        HashMap<Integer, Manifestacija> mapa = new HashMap<Integer, Manifestacija>();
+        for (Manifestacija manifestacija : getNeobrisaneManifestacije()) {
+            mapa.put(manifestacija.getId(), manifestacija);
+        }
+        return mapa;
+    }
+
     public Manifestacija findManifestacijaById (int id) {
-        for (Manifestacija manifestacija : listaManifestacija) {
+        for (Manifestacija manifestacija : getNeobrisaneManifestacije()) {
             if (manifestacija.getId() == id) {
                 return manifestacija;
             }
@@ -60,13 +81,13 @@ public class ManifestacijaDAO {
     }
 
     public static void sort() {
-        Collections.sort(listaManifestacija);
-        Collections.reverse(listaManifestacija);
+        Collections.sort(getListaManifestacija());
+        Collections.reverse(getListaManifestacija());
     }
 
     public ArrayList<Manifestacija> getAktuelneManifestacije() {
         ArrayList<Manifestacija> manifestacije = new ArrayList<>();
-        for (Manifestacija m : listaManifestacija) {
+        for (Manifestacija m : getListaManifestacija()) {
             if (!m.isObrisana()) {
                 manifestacije.add(m);
             }
@@ -172,5 +193,23 @@ public class ManifestacijaDAO {
         sacuvajManifestacije();
 
         return manifestacija;
+    }
+
+    public Manifestacija obrisiManifestaciju(int id) throws IOException {
+        Manifestacija manifestacija = findManifestacijaById(id);
+        manifestacija.setObrisana(true);
+        sacuvajManifestacije();
+
+        return manifestacija;
+    }
+
+    public void obrisiManifestacijeZaProdavca(List<Integer> manifestacije) throws IOException {
+        for (int id : manifestacije) {
+            for (Manifestacija m : getNeobrisaneManifestacije()) {
+                if (id == m.getId()) {
+                    obrisiManifestaciju(id);
+                }
+            }
+        }
     }
 }

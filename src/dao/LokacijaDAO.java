@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class LokacijaDAO {
@@ -22,7 +23,7 @@ public class LokacijaDAO {
             {
                 String[] lokacija = line.split(splitBy);
                 Lokacija l = new Lokacija(Integer.parseInt(lokacija[0]), Double.parseDouble(lokacija[1]),
-                        Double.parseDouble(lokacija[2]), lokacija[3]);
+                        Double.parseDouble(lokacija[2]), lokacija[3], Boolean.parseBoolean(lokacija[4]));
                 listaLokacija.add(l);
             }
         }
@@ -60,7 +61,8 @@ public class LokacijaDAO {
             f.append(String.valueOf(lokacija.getId())).append(",")
                     .append(String.valueOf(lokacija.getGeografskaSirina())).append(",")
                     .append(String.valueOf(lokacija.getGeografskaDuzina())).append(",")
-                    .append(lokacija.getAdresa()).append("\n");
+                    .append(lokacija.getAdresa()).append(",")
+                    .append(String.valueOf(lokacija.isObrisana())).append("\n");
         }
         f.flush();
         f.close();
@@ -74,5 +76,24 @@ public class LokacijaDAO {
         sacuvajLokacije();
 
         return lokacija;
+    }
+
+    public ArrayList<Lokacija> getNeobrisaneLokacije() {
+        ArrayList<Lokacija> lokacije = new ArrayList<>();
+        for (Lokacija l : listaLokacija) {
+            if (!l.isObrisana()) {
+                lokacije.add(l);
+            }
+        }
+        return lokacije;
+    }
+
+    public void obrisiLokacijuZaManifestaciju(int idLokacije) throws IOException {
+        for (Lokacija l : getNeobrisaneLokacije()) {
+            if (l.getId() == idLokacije) {
+                l.setObrisana(true);
+            }
+        }
+        sacuvajLokacije();
     }
 }

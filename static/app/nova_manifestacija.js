@@ -46,6 +46,7 @@ Vue.component("nova-manifestacija", {
           <div class="form-group">
             <input type="text" class="form-control" v-model="data.geografskaDuzina" placeholder="Geografska dužina">
           </div>
+          <div id="map" class="map"></div>
            <div class="form-group">
             <div class="form-control">
                 <label>Poster</label>
@@ -57,7 +58,6 @@ Vue.component("nova-manifestacija", {
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" v-on:click="potvrdi()">Potvrdi</button>
       </div>
-      <div id="map" class="map-right" ></div>
     </div>
 </div>	  
 
@@ -92,8 +92,18 @@ Vue.component("nova-manifestacija", {
                 vectorSource.addFeature(marker);
             }
 
+            reverseGeocode = function(coords) {
+                fetch('http://nominatim.openstreetmap.org/reverse?format=json&lon=' + coords[0] + '&lat=' + coords[1])
+                    .then(function(response) {
+                        return response.json();
+                    }).then(function(json) {
+                    self.data.adresa = json.address.road + " " + json.address.house_number + " " + json.address.postcode;
+                });
+            }
+
             map.on("click", function(event){
                 let position = ol.proj.toLonLat(event.coordinate);
+                reverseGeocode(position);
                 self.data.geografskaSirina = parseFloat(position.toString().split(",")[1]).toFixed(6);
                 self.data.geografskaDuzina = parseFloat(position.toString().split(",")[0]).toFixed(6);
                 vectorSource.clear();

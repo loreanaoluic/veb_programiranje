@@ -154,7 +154,7 @@ public class Main {
         });
 
 
-        get("/korisnici/svi-korisnici", (req, res) -> g.toJson(KorisnikDAO.getListaSvihKorisnika()));
+        get("/korisnici/svi-korisnici", (req, res) -> g.toJson(korisnikDAO.getNeobrisaneKorisnike()));
 
         post("/korisnici/izmena", (req, res) -> {
             var mapa = g.fromJson(req.body(), HashMap.class);
@@ -175,6 +175,18 @@ public class Main {
             return g.toJson(korisnik);
         });
 
+        post("/korisnici/izmena-lozinke", (req, res) -> {
+            var mapa = g.fromJson(req.body(), HashMap.class);
+            if (!ulogovanKorisnik.getLozinka().equals((String)mapa.get("stara"))) {
+                return "Greska";
+            }
+
+            ulogovanKorisnik.setLozinka((String)mapa.get("nova"));
+            korisnikDAO.izmeniKorisnika(ulogovanKorisnik);
+
+            return g.toJson(ulogovanKorisnik);
+        });
+
         post("/korisnici/pretraga", (req, res) -> {
 
             String ime = req.queryParams("ime").trim();
@@ -192,12 +204,26 @@ public class Main {
 
         });
 
+        post("/korisnici/obrisi/:id", (req, res) -> {
+            String korisnickoIme = req.params("id");
+            Korisnik korisnik = korisnikDAO.findUserByUsername(korisnickoIme);
+            if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+                kartaDAO.obrisiKarteZaKupca(korisnik.getKorisnickoIme());
+            } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+                Prodavac prodavac = korisnikDAO.findProdavacByUsername(korisnik.getKorisnickoIme());
+                manifestacijaDAO.obrisiManifestacijeZaProdavca(prodavac.getManifestacije());
+                kartaDAO.obrisiKarteZaProdavca(korisnik.getKorisnickoIme());
+            }
+            korisnikDAO.obrisiKorisnika(korisnickoIme);
+            return "Done";
+        });
+
 
         // MANIFESTACIJE
 
-        get("/manifestacije", (req, res) -> g.toJson(ManifestacijaDAO.getListaManifestacija()));
+        get("/manifestacije", (req, res) -> g.toJson(manifestacijaDAO.getNeobrisaneManifestacije()));
 
-        get("/manifestacijeMapa", (req, res) -> g.toJson(manifestacijaDAO.getMapaManifestacija()));
+        get("/manifestacijeMapa", (req, res) -> g.toJson(manifestacijaDAO.getMapaNeobrisaneManifestacija()));
 
         get("/manifestacije/:id", (req, res) -> {
             int id = Integer.parseInt(req.params("id"));
@@ -205,7 +231,7 @@ public class Main {
         });
 
         post("/manifestacije/manifestacije-prodavca", (req, res) -> {
-            ArrayList<Manifestacija> sveManifestacije = ManifestacijaDAO.getListaManifestacija();
+            ArrayList<Manifestacija> sveManifestacije = manifestacijaDAO.getNeobrisaneManifestacije();
             ArrayList<Manifestacija> manifestacijeProdavca = new ArrayList<>();
 
             for (int idManifestacije : ulogovanProdavac.getManifestacije()) {
@@ -248,7 +274,7 @@ public class Main {
             Random rand = new Random();
 
             Lokacija lokacija = new Lokacija(rand.nextInt(1000), Double.parseDouble(String.valueOf(mapa.get("geografskaSirina"))),
-                    Double.parseDouble(String.valueOf(mapa.get("geografskaDuzina"))), (String) mapa.get("adresa"));
+                    Double.parseDouble(String.valueOf(mapa.get("geografskaDuzina"))), (String) mapa.get("adresa"), false);
 
             Manifestacija manifestacija = new Manifestacija(rand.nextInt(1000), (String) mapa.get("naziv"),
                     (String) mapa.get("tipManifestacije"), Integer.parseInt((String) mapa.get("brojMesta")),
@@ -256,9 +282,8 @@ public class Main {
                     (String) mapa.get("poster"), false);
 
             for (Lokacija l : LokacijaDAO.listaLokacija) {
-                if (l.getAdresa().equals(lokacija.getAdresa()) && l.getGeografskaDuzina() == lokacija.getGeografskaDuzina()
-                        && l.getGeografskaSirina() == lokacija.getGeografskaSirina()) {
-                    for (Manifestacija m : ManifestacijaDAO.listaManifestacija) {
+                if (l.getAdresa().equals(lokacija.getAdresa())) {
+                    for (Manifestacija m : manifestacijaDAO.getNeobrisaneManifestacije()) {
                         if (m.getDatumIVremeOdrzavanja().equals(manifestacija.getDatumIVremeOdrzavanja())
                         && m.getLokacija() == l.getId()) {
                             return "Već postoji manifestacija na željenoj lokaciji u to vreme!";
@@ -297,6 +322,14 @@ public class Main {
 
             return manifestacijaDAO.izmeniManifestaciju(novaManifestacija);
 
+        });
+
+        post("/manifestacije/obrisi/:id", (req, res) -> {
+            int id = Integer.parseInt(req.params("id"));
+            Manifestacija manifestacija = manifestacijaDAO.obrisiManifestaciju(id);
+            kartaDAO.obrisiKarteZaManifestaciju(id);
+            lokacijaDAO.obrisiLokacijuZaManifestaciju(manifestacija.getLokacija());
+            return "Done";
         });
 
 
@@ -446,5 +479,13 @@ public class Main {
         });
 
         post("/karte/osvezi", (req, res) -> g.toJson(ulogovanKupac));
+
+        post("/karte/obrisi-admin/:id", (req, res) -> {
+            String id = req.params("id");
+            kartaDAO.obrisiKartu(id);
+            return "Done";
+        });
+
     }
+
 }

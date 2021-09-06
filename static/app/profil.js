@@ -7,7 +7,8 @@ Vue.component("profil", {
             karte: [],
             input: {
                 datumRodjenja: ""
-            }
+            },
+            lozinka: {}
         }
     },
     template: ` 
@@ -83,8 +84,11 @@ Vue.component("profil", {
                   </div>
                   <hr>
                   <div class="row">
-                    <div class="col-sm-12">
-                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#IzmeniModal">Izmeni</button>
+                    <div class="col-sm-6">
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#IzmeniModal">Izmeni lične podatke</button>
+                    </div>
+                    <div class="col-sm-4">
+                      <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#PromeniLozinku">Promeni lozinku</button>
                     </div>
                   </div>
                 </div>
@@ -137,6 +141,34 @@ Vue.component("profil", {
         </div>
       </div>
       
+      <div class="modal fade" id="PromeniLozinku" tabindex="-1" aria-labelledby="PromeniLozinku" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="PromeniLozinku">Promeni lozinku</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-body text-start">
+                <form>
+                  <div class="form-group">
+                    <input type="text" class="form-control" v-model="lozinka.stara" placeholder="Stara lozinka">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" v-model="lozinka.nova" placeholder="Nova lozinka">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" v-on:click="izmeniLozinku">Potvrdi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </div>
 
 `
@@ -163,6 +195,20 @@ Vue.component("profil", {
                 .then(function (response) {
                     localStorage.setItem('korisnik', JSON.stringify(response.data))
                     window.location.reload();
+                })
+                .catch(function (error) {
+                    alert(error.response.data);
+                });
+        },
+        izmeniLozinku(event) {
+            axios.post('/korisnici/izmena-lozinke', this.lozinka)
+                .then(function (response) {
+                    if (response.data !== "Greska") {
+                        localStorage.setItem('korisnik', JSON.stringify(response.data))
+                        window.location.reload();
+                    } else {
+                        alert("Uneli ste pogrešnu staru lozinku!");
+                    }
                 })
                 .catch(function (error) {
                     alert(error.response.data);

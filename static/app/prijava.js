@@ -30,15 +30,19 @@ Vue.component("prijava", {
         init : function() {
         },
         prijavi : function () {
-
             axios.post('/korisnici/login', this.data)
                 .then(function (response) {
-                    if (response.data !== "Greska") {
-                        localStorage.setItem('korisnik', JSON.stringify(response.data))
+                    if (response.data === "Greska") {
+                        alert("Pogrešno korisničko ime/lozinka.");
+
+                    } else if (response.data === "Nalog blokiran!") {
+                        alert(response.data);
+                    } else if (response.data === "Nalog obrisan!") {
+                        alert(response.data);
+                    } else {
+                        localStorage.setItem('korisnik', JSON.stringify(response.data));
                         window.location.href = "#/";
                         window.location.reload();
-                    } else {
-                        alert("Pogrešno korisničko ime/lozinka.");
                     }
                 })
                 .catch(function (error) {

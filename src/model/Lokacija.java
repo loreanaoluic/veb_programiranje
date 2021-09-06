@@ -5,16 +5,18 @@ public class Lokacija {
 	private double geografskaSirina;
 	private double geografskaDuzina;
 	private String adresa;
+	private boolean obrisana;
 	
 	public Lokacija() {
 
 	}
 
-	public Lokacija(int id, double geografskaSirina, double geografskaDuzina, String adresa) {
+	public Lokacija(int id, double geografskaSirina, double geografskaDuzina, String adresa, boolean obrisana) {
 		this.id = id;
 		this.geografskaSirina = geografskaSirina;
 		this.geografskaDuzina = geografskaDuzina;
 		this.adresa = adresa;
+		this.obrisana = obrisana;
 	}
 
 	public int getId() {
@@ -47,5 +49,13 @@ public class Lokacija {
 
 	public void setAdresa(String adresa) {
 		this.adresa = adresa;
+	}
+
+	public boolean isObrisana() {
+		return obrisana;
+	}
+
+	public void setObrisana(boolean obrisana) {
+		this.obrisana = obrisana;
 	}
 }

@@ -9,7 +9,8 @@ Vue.component("pregled-svih-korisnika", {
                 kriterijumSortiranja: "IME",
                 uloga: "SVE",
                 opadajuce: false
-            }
+            },
+            ulogovan: {}
         }
     },
     template: ` 
@@ -21,12 +22,18 @@ Vue.component("pregled-svih-korisnika", {
                 <div class="card">
                     <div class="card-body">
                           <div class="d-flex flex-column align-items-center text-center">
-                          <h4 class="d-flex align-items-center mb-3"> <b> {{ korisnik.ime }} {{ korisnik.prezime }} </b></h4>
-                          <i class="material-icons text-info mr-2">{{ korisnik.uloga }} </i>
-                          <br>
-                          <p><b>Korisničko ime: {{ korisnik.korisnickoIme }}</b></p>
-                          <p><i>Pol: {{ korisnik.pol }} </i></p>
-                          <p>Datum rođenja: {{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</p>
+                              <div v-if="(korisnik.korisnickoIme === ulogovan.korisnickoIme)">
+                                  <p class="material-icons text-info mr-2"> <b> MOJ NALOG </b></p>
+                              </div>
+                              <h4 class="d-flex align-items-center mb-3"> <b> {{ korisnik.ime }} {{ korisnik.prezime }} </b></h4>
+                              <i class="material-icons text-info mr-2">{{ korisnik.uloga }} </i>
+                              <br>
+                              <p><b>Korisničko ime: {{ korisnik.korisnickoIme }}</b></p>
+                              <p><i>Pol: {{ korisnik.pol }} </i></p>
+                              <p>Datum rođenja: {{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</p>
+                              <div class="modal-footer" v-if="(korisnik.korisnickoIme !== ulogovan.korisnickoIme)">
+                                  <button class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -68,6 +75,7 @@ Vue.component("pregled-svih-korisnika", {
 `
     ,
     mounted(){
+        this.ulogovan = JSON.parse(localStorage.getItem('korisnik'))
         let data = this;
         axios.get('/korisnici/svi-korisnici', this.data)
             .then(function (response) {
@@ -97,6 +105,11 @@ Vue.component("pregled-svih-korisnika", {
 
         closeNav : function () {
             document.getElementById("mySidebar").style.width = "0";
+        },
+        obrisi : function(korisnik) {
+            axios.post('/korisnici/obrisi/' + korisnik.korisnickoIme)
+            window.location.href = "#/pregled-svih-korisnika";
+            window.location.reload();
         }
     }
 
