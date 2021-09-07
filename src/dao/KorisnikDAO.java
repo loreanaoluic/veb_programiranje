@@ -346,7 +346,7 @@ public class KorisnikDAO {
         sacuvajKorisnike();
     }
 
-    public Korisnik obrisiKorisnika(String korisnickoIme) throws IOException {
+    public void obrisiKorisnika(String korisnickoIme) throws IOException {
         Korisnik korisnik = findUserByUsername(korisnickoIme);
         korisnik.setObrisan(true);
         if (korisnik.getUloga().equals(Uloga.KUPAC)) {
@@ -359,7 +359,35 @@ public class KorisnikDAO {
             prodavac.setObrisan(true);
         }
         sacuvajKorisnike();
+    }
 
-        return korisnik;
+    public void blokirajKorisnika(String korisnickoIme) throws IOException {
+        Korisnik korisnik = findUserByUsername(korisnickoIme);
+        korisnik.setBlokiran(true);
+        if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+            Kupac kupac = findKupacByUsername(korisnickoIme);
+            kupac.setBlokiran(true);
+        } else if (korisnik.getUloga().equals(Uloga.ADMIN)) {
+            korisnik.setBlokiran(true);
+        } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+            Prodavac prodavac = findProdavacByUsername(korisnickoIme);
+            prodavac.setBlokiran(true);
+        }
+        sacuvajKorisnike();
+    }
+
+    public void odblokirajKorisnika(String korisnickoIme) throws IOException {
+        Korisnik korisnik = findUserByUsername(korisnickoIme);
+        korisnik.setBlokiran(false);
+        if (korisnik.getUloga().equals(Uloga.KUPAC)) {
+            Kupac kupac = findKupacByUsername(korisnickoIme);
+            kupac.setBlokiran(false);
+        } else if (korisnik.getUloga().equals(Uloga.ADMIN)) {
+            korisnik.setBlokiran(false);
+        } else if (korisnik.getUloga().equals(Uloga.PRODAVAC)) {
+            Prodavac prodavac = findProdavacByUsername(korisnickoIme);
+            prodavac.setBlokiran(false);
+        }
+        sacuvajKorisnike();
     }
 }

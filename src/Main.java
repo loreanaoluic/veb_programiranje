@@ -218,6 +218,18 @@ public class Main {
             return "Done";
         });
 
+        post("/korisnici/blokiraj/:id", (req, res) -> {
+            String korisnickoIme = req.params("id");
+            korisnikDAO.blokirajKorisnika(korisnickoIme);
+            return "Done";
+        });
+
+        post("/korisnici/odblokiraj/:id", (req, res) -> {
+            String korisnickoIme = req.params("id");
+            korisnikDAO.odblokirajKorisnika(korisnickoIme);
+            return "Done";
+        });
+
 
         // MANIFESTACIJE
 

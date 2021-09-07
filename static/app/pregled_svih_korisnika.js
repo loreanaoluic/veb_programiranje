@@ -31,8 +31,19 @@ Vue.component("pregled-svih-korisnika", {
                               <p><b>Korisničko ime: {{ korisnik.korisnickoIme }}</b></p>
                               <p><i>Pol: {{ korisnik.pol }} </i></p>
                               <p>Datum rođenja: {{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</p>
-                              <div class="modal-footer" v-if="(korisnik.korisnickoIme !== ulogovan.korisnickoIme)">
-                                  <button class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
+                              <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
+                                  <div v-if="(korisnik.obrisan !== true)">
+                                      <button class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
+                                  </div>
+                              </div>
+                              <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
+                                  <div v-if="(korisnik.blokiran !== true)">
+                                    <button class="btn btn-outline-danger" v-on:click="blokiraj(korisnik)">Blokiraj</button>
+                                  </div>
+                                  <div v-if="(korisnik.blokiran === true)">
+                                    <p style="color=:red">Nalog blokiran!</p>
+                                    <button type="button" class="btn btn-outline-primary" v-on:click="odblokiraj(korisnik)">Odblokiraj</button>
+                                  </div>
                               </div>
                         </div>
                     </div>
@@ -108,6 +119,16 @@ Vue.component("pregled-svih-korisnika", {
         },
         obrisi : function(korisnik) {
             axios.post('/korisnici/obrisi/' + korisnik.korisnickoIme)
+            window.location.href = "#/pregled-svih-korisnika";
+            window.location.reload();
+        },
+        blokiraj : function(korisnik) {
+            axios.post('/korisnici/blokiraj/' + korisnik.korisnickoIme)
+            window.location.href = "#/pregled-svih-korisnika";
+            window.location.reload();
+        },
+        odblokiraj : function(korisnik) {
+            axios.post('/korisnici/odblokiraj/' + korisnik.korisnickoIme)
             window.location.href = "#/pregled-svih-korisnika";
             window.location.reload();
         }
