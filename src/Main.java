@@ -80,6 +80,8 @@ public class Main {
                 return "Neophodno je popuniti sva polja!";
             }
             else {
+                KorisnikDAO.listaSvihKorisnika.add(novi);
+
                 List<String> karte = new ArrayList<>();
                 List<Integer> manifestacije = new ArrayList<>();
 
@@ -87,13 +89,15 @@ public class Main {
                     Prodavac noviProdavac = new Prodavac(novi.getKorisnickoIme(), novi.getLozinka(), novi.getIme(), novi.getPrezime(),
                             novi.getPol(), novi.getDatumRodjenja(), Uloga.PRODAVAC, false, false, manifestacije, karte);
                     korisnikDAO.dodajProdavca(noviProdavac);
-                    return "Done";
+                    KorisnikDAO.listaProdavaca.add(noviProdavac);
+                    return "Done prodavac";
                 }
                 Kupac noviKupac = new Kupac(novi.getKorisnickoIme(), novi.getLozinka(), novi.getIme(), novi.getPrezime(),
-                        novi.getPol(), novi.getDatumRodjenja(), Uloga.KUPAC, false, false, karte, 0, 3, false);
+                        novi.getPol(), novi.getDatumRodjenja(), Uloga.KUPAC, false, false, karte, 0, 1, false);
 
                 korisnikDAO.dodajKupca(noviKupac);
-                return "Done";
+                KorisnikDAO.listaKupaca.add(noviKupac);
+                return "Done kupac";
             }
         });
 
@@ -434,7 +438,7 @@ public class Main {
 
             Random rand = new Random();
 
-            if (manifestacija.getStatus() && manifestacija.getBrojMesta() >
+            if (manifestacija.getStatus() && manifestacija.getBrojMesta() >=
                     Integer.parseInt(String.valueOf(mapa.get("kolicina")))) {
                 ShoppingCartItem shoppingCartItem = new ShoppingCartItem(rand.nextInt(1000), id, manifestacija.getCenaRegular(),
                         Integer.parseInt(String.valueOf(mapa.get("kolicina"))), TipKarte.valueOf((String) mapa.get("tipKarte")));

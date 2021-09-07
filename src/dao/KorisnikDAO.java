@@ -63,20 +63,22 @@ public class KorisnikDAO {
                     ArrayList<Integer> manifestacije = new ArrayList<>();
                     ArrayList<String> karte = new ArrayList<>();
 
-                    if (korisnik[9].contains(" ")) {
-                        String[] nizManifestacija = korisnik[9].split(" ");
-                        for (String manifestacija : nizManifestacija) {
-                            manifestacije.add(Integer.parseInt(manifestacija));
+                    if (korisnik.length > 10) {
+                        if (korisnik[9].contains(" ")) {
+                            String[] nizManifestacija = korisnik[9].split(" ");
+                            for (String manifestacija : nizManifestacija) {
+                                manifestacije.add(Integer.parseInt(manifestacija));
+                            }
+                        } else {
+                            manifestacije.add(Integer.parseInt(korisnik[9]));
                         }
-                    } else {
-                        manifestacije.add(Integer.parseInt(korisnik[9]));
-                    }
 
-                    if (korisnik[10].contains(" ")) {
-                        String[] nizKarata = korisnik[10].split(" ");
-                        karte.addAll(Arrays.asList(nizKarata));
-                    } else {
-                        karte.add(korisnik[10]);
+                        if (korisnik[10].contains(" ")) {
+                            String[] nizKarata = korisnik[10].split(" ");
+                            karte.addAll(Arrays.asList(nizKarata));
+                        } else {
+                            karte.add(korisnik[10]);
+                        }
                     }
 
                     Prodavac prodavac = new Prodavac(noviKorisnik.getKorisnickoIme(), noviKorisnik.getLozinka(),
@@ -193,7 +195,6 @@ public class KorisnikDAO {
                 .append(String.valueOf(novi.getObrisan()));
         file.flush();
         file.close();
-
     }
 
     public void dodajKupca(Kupac noviKupac) throws IOException {
@@ -215,7 +216,6 @@ public class KorisnikDAO {
                 .append(String.valueOf(noviKupac.isSumnjiv())).append("\n");
         file.flush();
         file.close();
-
     }
 
     public void dodajProdavca(Prodavac noviProdavac) throws IOException {
@@ -244,7 +244,6 @@ public class KorisnikDAO {
         file.append("\n");
         file.flush();
         file.close();
-
     }
 
     public void izmeniKorisnika(Korisnik izmenjen) throws IOException {

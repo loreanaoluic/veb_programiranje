@@ -4,7 +4,8 @@ Vue.component("registracija", {
 				data : {
 					pol: "MUSKO",
 					datumRodjenja: "2000-01-01"
-				}
+				},
+				korisnik: {}
 		    }
 	},
 	template: ` 
@@ -50,6 +51,10 @@ Vue.component("registracija", {
 
 `
 	,
+	mounted() {
+		this.korisnik = JSON.parse(localStorage.getItem('korisnik'))
+	}
+	,
 	methods : {
 		init : function() {
 		},
@@ -57,8 +62,17 @@ Vue.component("registracija", {
 
 			axios.post('/korisnici/registracija', this.data)
 				.then(function (response) {
-					window.location.href = "#/prijava";
-					window.location.reload();
+					if (response.data === "Done prodavac") {
+						alert("Prodavac registrovan!");
+						window.location.href = "#/pregled-svih-korisnika";
+						window.location.reload();
+
+					} else if (response.data === "Done kupac") {
+						window.location.href = "#/prijava";
+						window.location.reload();
+					} else {
+						alert(response.data);
+					}
 				})
 				.catch(function (error) {
 					alert(error.response.data);
