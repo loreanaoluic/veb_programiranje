@@ -31,6 +31,14 @@ Vue.component("pregled-svih-korisnika", {
                               <p><b>Korisničko ime: {{ korisnik.korisnickoIme }}</b></p>
                               <p><i>Pol: {{ korisnik.pol }} </i></p>
                               <p>Datum rođenja: {{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</p>
+                              <div v-if="(korisnik.uloga === 'KUPAC')">
+                                  <p>Broj bodova: {{ korisnik.brojBodova}}</p>
+                              </div>
+                              <div v-if="(korisnik.uloga === 'KUPAC')">
+                                  <div v-if="(korisnik.sumnjiv === true)">
+                                    <i style="color:#808080">SUMNJIV</i>
+                                  </div>
+                              </div>
                               <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
                                   <div v-if="(korisnik.obrisan !== true)">
                                       <button class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
@@ -41,7 +49,7 @@ Vue.component("pregled-svih-korisnika", {
                                     <button class="btn btn-outline-danger" v-on:click="blokiraj(korisnik)">Blokiraj</button>
                                   </div>
                                   <div v-if="(korisnik.blokiran === true)">
-                                    <p style="color=:red">Nalog blokiran!</p>
+                                    <p style="color:red">Nalog blokiran!</p>
                                     <button type="button" class="btn btn-outline-primary" v-on:click="odblokiraj(korisnik)">Odblokiraj</button>
                                   </div>
                               </div>

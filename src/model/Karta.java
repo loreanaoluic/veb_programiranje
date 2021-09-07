@@ -15,12 +15,14 @@ public class Karta {
 	private boolean obrisana;
 	private String kupac;
 	private String prodavac;
+	private LocalDateTime vremeOtkazivanja;
 
 	public Karta() {
 
 	}
 
-	public Karta(String id, int manifestacija, LocalDateTime datumIVremeManifestacije, double cena, StatusKarte statusKarte, TipKarte tipKarte, boolean obrisana, String kupac, String prodavac) {
+	public Karta(String id, int manifestacija, LocalDateTime datumIVremeManifestacije, double cena, StatusKarte statusKarte,
+				 TipKarte tipKarte, boolean obrisana, String kupac, String prodavac, LocalDateTime vremeOtkazivanja) {
 		this.id = id;
 		this.manifestacija = manifestacija;
 		this.datumIVremeManifestacije = datumIVremeManifestacije;
@@ -30,6 +32,7 @@ public class Karta {
 		this.obrisana = obrisana;
 		this.kupac = kupac;
 		this.prodavac = prodavac;
+		this.vremeOtkazivanja = vremeOtkazivanja;
 	}
 
 	public String getId() {
@@ -102,5 +105,13 @@ public class Karta {
 
 	public void setProdavac(String prodavac) {
 		this.prodavac = prodavac;
+	}
+
+	public LocalDateTime getVremeOtkazivanja() {
+		return vremeOtkazivanja;
+	}
+
+	public void setVremeOtkazivanja(LocalDateTime vremeOtkazivanja) {
+		this.vremeOtkazivanja = vremeOtkazivanja;
 	}
 }

@@ -7,9 +7,6 @@ import model.enums.TipKarte;
 import model.enums.Uloga;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -49,6 +46,7 @@ public class Main {
         kartaDAO.ucitajKarte();
         manifestacijaDAO.ucitajManifestacije();
         lokacijaDAO.ucitajLokacije();
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -92,7 +90,7 @@ public class Main {
                     return "Done";
                 }
                 Kupac noviKupac = new Kupac(novi.getKorisnickoIme(), novi.getLozinka(), novi.getIme(), novi.getPrezime(),
-                        novi.getPol(), novi.getDatumRodjenja(), Uloga.KUPAC, false, false, karte, 0, 3);
+                        novi.getPol(), novi.getDatumRodjenja(), Uloga.KUPAC, false, false, karte, 0, 3, false);
 
                 korisnikDAO.dodajKupca(noviKupac);
                 return "Done";
@@ -154,7 +152,13 @@ public class Main {
         });
 
 
-        get("/korisnici/svi-korisnici", (req, res) -> g.toJson(korisnikDAO.getNeobrisaneKorisnike()));
+        get("/korisnici/svi-korisnici", (req, res) -> {
+            ArrayList<Object> korisnici = new ArrayList<>();
+            korisnici.addAll(korisnikDAO.getNeobrisaneAdmine());
+            korisnici.addAll(korisnikDAO.getNeobrisaneProdavce());
+            korisnici.addAll(korisnikDAO.getNeobrisaneKupce());
+            return g.toJson(korisnici);
+        });
 
         post("/korisnici/izmena", (req, res) -> {
             var mapa = g.fromJson(req.body(), HashMap.class);
@@ -469,7 +473,7 @@ public class Main {
                     Prodavac prodavac = korisnikDAO.findProdavacByManifestacija(manifestacija.getId());
 
                     String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk"
-                            +"lmnopqrstuvwxyz!@#$%&";
+                            +"lmnopqrstuvwxyz";
                     Random rnd = new Random();
                     StringBuilder sb = new StringBuilder(10);
                     for (int i2 = 0; i2 < 10; i2++)
@@ -477,7 +481,7 @@ public class Main {
 
                     Karta karta = new Karta(sb.toString(), manifestacija.getId(), manifestacija.getDatumIVremeOdrzavanja(),
                             shoppingCartItem.getUkupnaCena(), StatusKarte.REZERVISANA, shoppingCartItem.getTipKarte(),
-                            false, ulogovanKupac.getKorisnickoIme(), prodavac.getKorisnickoIme());
+                            false, ulogovanKupac.getKorisnickoIme(), prodavac.getKorisnickoIme(), null);
                     kartaDAO.dodajKartu(karta);
                     korisnikDAO.dodajKarteKupcu(karta.getId(), ulogovanKupac);
                     korisnikDAO.dodajKarteProdavcu(karta.getId(), prodavac);
@@ -522,6 +526,7 @@ public class Main {
 
             ArrayList<Karta> karte = kartaDAO.odustaniOdKarte(karta, ulogovanKupac);
             tipKupcaDAO.azurirajTip(ulogovanKupac);
+            kartaDAO.azurirajSumnjiv(ulogovanKupac);
             korisnikDAO.sacuvajKorisnike();
 
             return g.toJson(karte);

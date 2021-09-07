@@ -51,7 +51,8 @@ public class KorisnikDAO {
                     Kupac kupac = new Kupac(noviKorisnik.getKorisnickoIme(), noviKorisnik.getLozinka(),
                             noviKorisnik.getIme(), noviKorisnik.getPrezime(), noviKorisnik.getPol(),
                             noviKorisnik.getDatumRodjenja(), noviKorisnik.getUloga(), noviKorisnik.getBlokiran(),
-                            noviKorisnik.getObrisan(), karte, Integer.parseInt(korisnik[10]), Integer.parseInt(korisnik[11]));
+                            noviKorisnik.getObrisan(), karte, Integer.parseInt(korisnik[10]), Integer.parseInt(korisnik[11]),
+                            Boolean.parseBoolean(korisnik[12]));
 
                     listaKupaca.add(kupac);
                 }
@@ -210,7 +211,8 @@ public class KorisnikDAO {
             }
         }
         file.append(",").append(String.valueOf(noviKupac.getBrojBodova())).append(",")
-                .append(String.valueOf(noviKupac.getTip())).append("\n");
+                .append(String.valueOf(noviKupac.getTip())).append(",")
+                .append(String.valueOf(noviKupac.isSumnjiv())).append("\n");
         file.flush();
         file.close();
 
@@ -254,7 +256,8 @@ public class KorisnikDAO {
             listaKupaca.remove(kupac);
             Kupac novi = new Kupac(izmenjen.getKorisnickoIme(), izmenjen.getLozinka(), izmenjen.getIme(),
                     izmenjen.getPrezime(), izmenjen.getPol(), izmenjen.getDatumRodjenja(), izmenjen.getUloga(),
-                    izmenjen.getBlokiran(), izmenjen.getObrisan(), kupac.getKarte(), kupac.getBrojBodova(), kupac.getTip());
+                    izmenjen.getBlokiran(), izmenjen.getObrisan(), kupac.getKarte(), kupac.getBrojBodova(), kupac.getTip(),
+                    kupac.isSumnjiv());
             listaKupaca.add(novi);
         } else if (izmenjen.getUloga().equals(Uloga.PRODAVAC)) {
             Prodavac prodavac = findProdavacByUsername(izmenjen.getKorisnickoIme());

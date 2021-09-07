@@ -2,8 +2,6 @@ package dao;
 
 import model.Karta;
 import model.Kupac;
-import model.Lokacija;
-import model.Manifestacija;
 import model.enums.StatusKarte;
 import model.enums.TipKarte;
 import sort.*;
@@ -14,7 +12,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 
 public class KartaDAO {
@@ -30,9 +31,13 @@ public class KartaDAO {
             while ((line = br.readLine()) != null)
             {
                 String[] karta = line.split(splitBy);
+                LocalDateTime datum = null;
+                if (!karta[9].equals("null")) {
+                    datum = LocalDateTime.parse(karta[9]);
+                }
                 Karta k = new Karta(karta[0], Integer.parseInt(karta[1]), LocalDateTime.parse(karta[2]),
                         Double.parseDouble(karta[3]), StatusKarte.valueOf(karta[4]), TipKarte.valueOf(karta[5]),
-                        Boolean.parseBoolean(karta[6]), karta[7], karta[8]);
+                        Boolean.parseBoolean(karta[6]), karta[7], karta[8], datum);
                 listaKarata.add(k);
             }
         }
@@ -134,6 +139,10 @@ public class KartaDAO {
 
     public void dodajKartu(Karta karta) throws IOException {
         FileWriter file = new FileWriter("data/karte.csv", true);
+        String datum = "null";
+        if (karta.getStatusKarte().equals(StatusKarte.ODUSTANAK)) {
+            datum = String.valueOf(karta.getVremeOtkazivanja());
+        }
         file.append(karta.getId()).append(",")
                 .append(String.valueOf(karta.getManifestacija())).append(",")
                 .append(String.valueOf(karta.getDatumIVremeManifestacije())).append(",")
@@ -142,8 +151,8 @@ public class KartaDAO {
                 .append(String.valueOf(karta.getTipKarte())).append(",")
                 .append(String.valueOf(karta.isObrisana())).append(",")
                 .append(String.valueOf(karta.getKupac())).append(",")
-                .append(String.valueOf(karta.getProdavac()));
-        file.append("\n");
+                .append(String.valueOf(karta.getProdavac())).append(",")
+                .append(datum).append("\n");
         file.flush();
         file.close();
 
@@ -153,6 +162,10 @@ public class KartaDAO {
     public void sacuvajKarte() throws IOException {
         FileWriter f = new FileWriter("data/karte.csv", false);
         for (Karta karta : listaKarata) {
+            String datum = "null";
+            if (karta.getStatusKarte().equals(StatusKarte.ODUSTANAK)) {
+                datum = String.valueOf(karta.getVremeOtkazivanja());
+            }
             f.append(karta.getId()).append(",")
                     .append(String.valueOf(karta.getManifestacija())).append(",")
                     .append(String.valueOf(karta.getDatumIVremeManifestacije())).append(",")
@@ -161,7 +174,8 @@ public class KartaDAO {
                     .append(String.valueOf(karta.getTipKarte())).append(",")
                     .append(String.valueOf(karta.isObrisana())).append(",")
                     .append(String.valueOf(karta.getKupac())).append(",")
-                    .append(String.valueOf(karta.getProdavac())).append("\n");
+                    .append(String.valueOf(karta.getProdavac())).append(",")
+                    .append(datum).append("\n");
         }
         f.flush();
         f.close();
@@ -169,6 +183,7 @@ public class KartaDAO {
 
     public ArrayList<Karta> odustaniOdKarte(Karta karta, Kupac kupac) throws IOException {
         karta.setStatusKarte(StatusKarte.ODUSTANAK);
+        karta.setVremeOtkazivanja(LocalDateTime.now());
         sacuvajKarte();
 
         int stariBodovi = kupac.getBrojBodova();
@@ -210,5 +225,29 @@ public class KartaDAO {
             }
         }
         sacuvajKarte();
+    }
+
+    public void azurirajSumnjiv(Kupac kupac) {
+        int brojOtkazivanja = 0;
+        for (Karta k : getNeobrisaneKarte()) {
+            if (k.getKupac().equals(kupac.getKorisnickoIme()) && k.getStatusKarte().equals(StatusKarte.ODUSTANAK)) {
+                ZonedDateTime zdt = ZonedDateTime.of(k.getVremeOtkazivanja(), ZoneId.systemDefault());
+                long datumOtkazivanja = zdt.toInstant().toEpochMilli();
+
+                Calendar cal = Calendar.getInstance();
+                cal.clear();
+                cal.set(LocalDateTime.now().getYear(),
+                        LocalDateTime.now().getMonthValue() - 2,
+                        LocalDateTime.now().getDayOfMonth());
+                long mesecDanaRanije = cal.getTimeInMillis();
+
+                if (datumOtkazivanja > mesecDanaRanije) {
+                    brojOtkazivanja++;
+                }
+            }
+        }
+        if (brojOtkazivanja > 5) {
+            kupac.setSumnjiv(true);
+        }
     }
 }
