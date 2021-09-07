@@ -250,4 +250,13 @@ public class KartaDAO {
             kupac.setSumnjiv(true);
         }
     }
+
+    public void izmeniDatumIVreme(int manifestacija, LocalDateTime datumIVremeManifestacije) throws IOException {
+        for (Karta k : listaKarata) {
+            if (k.getManifestacija() == manifestacija) {
+                k.setDatumIVremeManifestacije(datumIVremeManifestacije);
+            }
+        }
+        sacuvajKarte();
+    }
 }

@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -297,7 +298,7 @@ public class KorisnikDAO {
     }
 
     public ArrayList<Korisnik> searchFilterSort(String ime, String prezime, String korisnickoIme, String kriterijumSortiranja,
-                                             String uloga, boolean opadajuce) {
+                                             String uloga, boolean opadajuce, boolean sumnjivi) {
 
         ArrayList<Korisnik> pronadjene = new ArrayList<>();
         for(Korisnik k : getNeobrisaneKorisnike()) {
@@ -323,6 +324,19 @@ public class KorisnikDAO {
 
         if (opadajuce) {
             Collections.reverse(pronadjene);
+        }
+
+        if (sumnjivi) {
+            ArrayList<Korisnik> sumnjiviKorisnici = new ArrayList<>();
+            for (Korisnik k : pronadjene) {
+                if (k.getUloga().equals(Uloga.KUPAC)) {
+                    Kupac kupac = findKupacByUsername(k.getKorisnickoIme());
+                    if (kupac.isSumnjiv()) {
+                        sumnjiviKorisnici.add(k);
+                    }
+                }
+            }
+            return sumnjiviKorisnici;
         }
 
         return pronadjene;

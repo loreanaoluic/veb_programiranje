@@ -8,57 +8,60 @@ Vue.component("pregled-svih-korisnika", {
                 korisnickoIme: "",
                 kriterijumSortiranja: "IME",
                 uloga: "SVE",
-                opadajuce: false
+                opadajuce: false,
+                sumnjivi: false
             },
             ulogovan: {}
         }
     },
     template: ` 
-<div class="container">
-    <div class="main-body">  
-          <button class="openbtn" v-on:click="openNav()">&#9776; Filter</button>
-          <div class="row gutters-sm">
-            <div class="col-sm-4" v-for="korisnik in korisnici" :key="korisnik.korisnickoIme">
-                <div class="card">
-                    <div class="card-body">
-                          <div class="d-flex flex-column align-items-center text-center">
-                              <div v-if="(korisnik.korisnickoIme === ulogovan.korisnickoIme)">
-                                  <p class="material-icons text-info mr-2"> <b> MOJ NALOG </b></p>
-                              </div>
-                              <h4 class="d-flex align-items-center mb-3"> <b> {{ korisnik.ime }} {{ korisnik.prezime }} </b></h4>
-                              <i class="material-icons text-info mr-2">{{ korisnik.uloga }} </i>
-                              <br>
-                              <p><b>Korisničko ime: {{ korisnik.korisnickoIme }}</b></p>
-                              <p><i>Pol: {{ korisnik.pol }} </i></p>
-                              <p>Datum rođenja: {{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</p>
-                              <div v-if="(korisnik.uloga === 'KUPAC')">
-                                  <p>Broj bodova: {{ korisnik.brojBodova}}</p>
-                              </div>
-                              <div v-if="(korisnik.uloga === 'KUPAC')">
-                                  <div v-if="(korisnik.sumnjiv === true)">
-                                    <i style="color:#808080">SUMNJIV</i>
-                                  </div>
-                              </div>
-                              <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
-                                  <div v-if="(korisnik.obrisan !== true)">
-                                      <button class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
-                                  </div>
-                              </div>
-                              <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
-                                  <div v-if="(korisnik.blokiran !== true)">
-                                    <button class="btn btn-outline-danger" v-on:click="blokiraj(korisnik)">Blokiraj</button>
-                                  </div>
-                                  <div v-if="(korisnik.blokiran === true)">
-                                    <p style="color:red">Nalog blokiran!</p>
-                                    <button type="button" class="btn btn-outline-primary" v-on:click="odblokiraj(korisnik)">Odblokiraj</button>
-                                  </div>
-                              </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+ <div class="container">
+   <button class="openbtn" v-on:click="openNav()">&#9776; Filter</button>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="main-box clearfix">
+          <div class="table-responsive">
+            <table class="table user-list">
+              <thead>
+              <tr>
+                <th><span>Ime i prezime</span></th>
+                <th><span>Uloga</span></th>
+                <th><span>Korisničko ime</span></th>
+                <th><span>Pol</span></th>
+                <th><span>Datum rođenja</span></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="korisnik in korisnici" :key="korisnik.korisnickoIme">
+                <td><span>{{ korisnik.ime }} {{ korisnik.prezime }}</span></td>
+                <td><span>{{ korisnik.uloga }}</span></td>
+                <td><span>{{ korisnik.korisnickoIme }}</span></td>
+                <td><span>{{ korisnik.pol }}</span></td>
+                <td><span>{{ korisnik.datumRodjenja.day }}.{{ korisnik.datumRodjenja.month }}.{{ korisnik.datumRodjenja.year }}</span></td>
+                <td><span><div v-if="(korisnik.uloga === 'KUPAC')">
+                      <div v-if="(korisnik.sumnjiv === true)">
+                        <i style="color:#808080">SUMNJIV</i>
+                      </div>
+                </div></span></td>
+                 <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
+                  <div v-if="(korisnik.obrisan !== true)">
+                    <button style="font-size: 12px" class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
+                  </div>
+                  <div v-if="(korisnik.blokiran !== true)">
+                    <button style="font-size: 12px" class="btn btn-outline-danger" v-on:click="blokiraj(korisnik)">Blokiraj</button>
+                  </div>
+                  <div v-if="(korisnik.blokiran === true)">
+                    <button style="font-size: 12px" class="btn btn-outline-primary" v-on:click="odblokiraj(korisnik)">Odblokiraj</button>
+                  </div>
+                  </div>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
+
     <div id="mySidebar" class="sidebar">
 		  <a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
 		  <table>
@@ -84,7 +87,8 @@ Vue.component("pregled-svih-korisnika", {
 			  <option value="SVE">SVE</option>
 			</select>
 			</td></tr><br>
-			  <tr><td style="color:white">Opadajući prikaz:</td> <td><input type="checkbox" name="opadajuce" v-model="searchParams.opadajuce" ></td></tr>
+			  <tr><td style="color:white">Opadajući prikaz:</td> <td><input type="checkbox" name="opadajuce" v-model="searchParams.opadajuce" ></td></tr><br>
+              <tr><td style="color:white">Prikaz sumnjivih kupaca:</td> <td><input type="checkbox" name="sumnjivi" v-model="searchParams.sumnjivi" ></td></tr>
 			  <br><br><br>
 			  <tr><td colspan=2 align=center ><input type="button" name="search" value="Potvrdi" v-on:click="pretrazi()" /></td></tr>
 		  </table>
@@ -109,7 +113,7 @@ Vue.component("pregled-svih-korisnika", {
             axios.post('/korisnici/pretraga?ime='  + this.searchParams.ime + "&prezime=" + this.searchParams.prezime +
                 "&korisnickoIme=" + this.searchParams.korisnickoIme + "&kriterijumSortiranja=" +
                 this.searchParams.kriterijumSortiranja  + "&uloga=" + this.searchParams.uloga + "&opadajuce="
-                + this.searchParams.opadajuce)
+                + this.searchParams.opadajuce + "&sumnjivi=" + this.searchParams.sumnjivi)
                 .then(function (response) {
                     self.korisnici = response.data;
 

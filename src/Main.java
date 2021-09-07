@@ -203,9 +203,10 @@ public class Main {
             String kriterijumSortiranja = req.queryParams("kriterijumSortiranja").trim();
             String uloga = req.queryParams("uloga").trim();
             boolean opadajuce = Boolean.parseBoolean(req.queryParams("opadajuce").trim());
+            boolean sumnjivi = Boolean.parseBoolean(req.queryParams("sumnjivi").trim());
 
             List<Korisnik> korisnici = korisnikDAO.searchFilterSort(ime, prezime, korisnickoIme, kriterijumSortiranja,
-                    uloga, opadajuce);
+                    uloga, opadajuce, sumnjivi);
 
             res.type("application/json");
             return g.toJson(korisnici);
@@ -377,6 +378,9 @@ public class Main {
             }
 
             lokacijaDAO.izmeniLokaciju(novaLokacija);
+
+            kartaDAO.izmeniDatumIVreme(id, novaManifestacija.getDatumIVremeOdrzavanja());
+
             return manifestacijaDAO.izmeniManifestaciju(novaManifestacija);
 
         });
