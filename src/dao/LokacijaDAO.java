@@ -34,7 +34,7 @@ public class LokacijaDAO {
     }
 
     public Lokacija findLokacijaById(int id) {
-        for (Lokacija lokacija : listaLokacija) {
+        for (Lokacija lokacija : getNeobrisaneLokacije()) {
             if (lokacija.getId() == id) {
                 return lokacija;
             }
@@ -68,14 +68,12 @@ public class LokacijaDAO {
         f.close();
     }
 
-    public Lokacija izmeniLokaciju(Lokacija novaLokacija) throws IOException {
+    public void izmeniLokaciju(Lokacija novaLokacija) throws IOException {
         Lokacija lokacija = findLokacijaById(novaLokacija.getId());
         lokacija.setGeografskaDuzina(lokacija.getGeografskaDuzina());
         lokacija.setGeografskaSirina(lokacija.getGeografskaSirina());
         lokacija.setAdresa(novaLokacija.getAdresa());
         sacuvajLokacije();
-
-        return lokacija;
     }
 
     public ArrayList<Lokacija> getNeobrisaneLokacije() {

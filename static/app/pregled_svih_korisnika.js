@@ -43,16 +43,16 @@ Vue.component("pregled-svih-korisnika", {
                         <i style="color:#808080">SUMNJIV</i>
                       </div>
                 </div></span></td>
-                 <div class="modal-footer" v-if="(korisnik.uloga !== 'ADMIN')">
-                  <div v-if="(korisnik.obrisan !== true)">
+                 <div v-if="(korisnik.uloga !== 'ADMIN')">
+                  <td><span><div v-if="(korisnik.obrisan !== true)">
                     <button style="font-size: 12px" class="btn btn-danger" v-on:click="obrisi(korisnik)">Obriši</button>
-                  </div>
-                  <div v-if="(korisnik.blokiran !== true)">
+                  </div></span></td>
+                  <td><span><div v-if="(korisnik.blokiran !== true)">
                     <button style="font-size: 12px" class="btn btn-outline-danger" v-on:click="blokiraj(korisnik)">Blokiraj</button>
-                  </div>
-                  <div v-if="(korisnik.blokiran === true)">
+                  </div></span></td>
+                  <td><span><div v-if="(korisnik.blokiran === true)">
                     <button style="font-size: 12px" class="btn btn-outline-primary" v-on:click="odblokiraj(korisnik)">Odblokiraj</button>
-                  </div>
+                  </div></span></td>
                   </div>
               </tr>
               </tbody>

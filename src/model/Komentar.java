@@ -1,5 +1,7 @@
 package model;
 
+import model.enums.StatusKomentara;
+
 public class Komentar {
 	private int id;
 	private String kupac;
@@ -7,16 +9,18 @@ public class Komentar {
 	private String tekstKomentara;
 	private double ocena;
 	private boolean obrisan;
+	private StatusKomentara status;
 	
 	public Komentar() {}
 
-	public Komentar(int id, String kupac, int manifestacija, String tekstKomentara, double ocena, boolean obrisan) {
+	public Komentar(int id, String kupac, int manifestacija, String tekstKomentara, double ocena, boolean obrisan, StatusKomentara status) {
 		this.id = id;
 		this.kupac = kupac;
 		this.manifestacija = manifestacija;
 		this.tekstKomentara = tekstKomentara;
 		this.ocena = ocena;
 		this.obrisan = obrisan;
+		this.status = status;
 	}
 
 	public int getId() {
@@ -65,5 +69,13 @@ public class Komentar {
 
 	public void setObrisan(boolean obrisan) {
 		this.obrisan = obrisan;
+	}
+
+	public StatusKomentara getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusKomentara status) {
+		this.status = status;
 	}
 }

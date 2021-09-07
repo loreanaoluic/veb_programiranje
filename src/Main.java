@@ -1,10 +1,7 @@
 import com.google.gson.Gson;
 import dao.*;
 import model.*;
-import model.enums.Pol;
-import model.enums.StatusKarte;
-import model.enums.TipKarte;
-import model.enums.Uloga;
+import model.enums.*;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -21,6 +18,7 @@ public class Main {
     static KartaDAO kartaDAO;
     static ManifestacijaDAO manifestacijaDAO;
     static LokacijaDAO lokacijaDAO;
+    static KomentarDAO komentarDAO;
 
     private static Korisnik ulogovanKorisnik;
     private static Kupac ulogovanKupac;
@@ -34,6 +32,7 @@ public class Main {
         kartaDAO = new KartaDAO();
         manifestacijaDAO = new ManifestacijaDAO();
         lokacijaDAO = new LokacijaDAO();
+        komentarDAO = new KomentarDAO();
 
         ulogovanKorisnik = null;
         ulogovanKupac = null;
@@ -46,6 +45,7 @@ public class Main {
         kartaDAO.ucitajKarte();
         manifestacijaDAO.ucitajManifestacije();
         lokacijaDAO.ucitajLokacije();
+        komentarDAO.ucitajKomentare();
 
     }
 
@@ -62,6 +62,7 @@ public class Main {
         });
 
         ucitaj();
+
 
         // KORISNICI
 
@@ -548,6 +549,39 @@ public class Main {
             return "Done";
         });
 
+
+        // KOMENTARI
+
+        get("/komentari/:id", (req, res) -> {
+            int manifestacija = Integer.parseInt(req.params("id"));
+            if (ulogovanKorisnik.getUloga().equals(Uloga.KUPAC)) {
+                return g.toJson(komentarDAO.findKomentareByManifestacijaAndStatusPrihvacen(manifestacija));
+            }
+            return g.toJson(komentarDAO.findKomentareByManifestacija(manifestacija));
+
+        });
+
+        post("/komentari/prihvati/:id", (req, res) -> {
+            komentarDAO.prihvatiKomentar(Integer.parseInt(req.params("id")));
+            return "Done";
+        });
+
+        post("/komentari/odbij/:id", (req, res) -> {
+            komentarDAO.odbijKomentar(Integer.parseInt(req.params("id")));
+            return "Done";
+        });
+
+        post("/komentari/posalji/:id", (req, res) -> {
+            int manifestacija = Integer.parseInt(req.params("id"));
+            var mapa = g.fromJson(req.body(), HashMap.class);
+            Random rand = new Random();
+            Komentar komentar = new Komentar(rand.nextInt(1000), ulogovanKupac.getKorisnickoIme(), manifestacija,
+                    String.valueOf(mapa.get("tekstKomentara")), Double.parseDouble(String.valueOf(mapa.get("ocena"))),
+                    false, StatusKomentara.NA_CEKANJU);
+            komentarDAO.dodajKomentar(komentar);
+            komentarDAO.sacuvajKomentare();
+            return "Done";
+        });
     }
 
 }

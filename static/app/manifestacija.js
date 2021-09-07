@@ -20,6 +20,13 @@ Vue.component("manifestacija", {
     <div class="modal-content">
       <div class="modal-body text-start">
         <form>
+          <div>
+            <button class="korpa" v-on:click="prikaziKomentare()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="blue" class="bi bi-chat-right-text-fill" viewBox="0 0 16 16">
+                  <path d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353V2zM3.5 3h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1z"/>
+              </svg>
+            </button><br><br>
+          </div>
           <div class="d-flex flex-column align-items-center text-center">
               <img  v-bind:src="manifestacija.poster" alt="Avatar" style="width:100%">
               <h4 class="d-flex align-items-center mb-3"> <b> {{ manifestacija.naziv }} </b></h4>
@@ -173,6 +180,14 @@ Vue.component("manifestacija", {
             axios.post('/manifestacije/obrisi/' + this.manifestacija.id)
             window.location.href = "#/";
             window.location.reload();
+        },
+        prikaziKomentare : function () {
+            if (this.korisnik !== null) {
+                window.location.href = "#/prikaz-komentara";
+                window.location.reload();
+            } else {
+                alert("Neregistrovani kupci nemaju pristup komentarima!")
+            }
         }
     }
 
