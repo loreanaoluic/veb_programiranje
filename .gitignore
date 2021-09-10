@@ -8,12 +8,6 @@ tmp/
 *.bak
 *.swp
 *~.nib
-.idea
-out
-veb_programiranje.iml
-node_modules
 local.properties
 .loadpath
 .factorypath
-
-

@@ -1,0 +1,31 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-api-0.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-gson-0.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-impl-0.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/websocket-client-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javaxt-core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-simple-1.7.21.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/websocket-api-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-http-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.21.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-server-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-xml-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-webapp-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/websocket-server-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spark-core-2.5.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-util-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-io-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/websocket-common-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-security-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/websocket-servlet-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jetty-servlet-9.3.6.v20151106.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.servlet-api-3.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
