@@ -103,7 +103,7 @@ public class ManifestacijaDAO {
         ArrayList<Manifestacija> pronadjene = new ArrayList<>();
         for(Manifestacija m : getAktuelneManifestacije()) {
 
-            String lokacijaM = lokacijaDAO.findLokacijaById(m.getId()).getAdresa();
+            String lokacijaM = lokacijaDAO.findLokacijaById(m.getLokacija()).getAdresa();
             long datumM = Timestamp.valueOf(m.getDatumIVremeOdrzavanja()).getTime();
 
             if(m.getNaziv().toUpperCase().contains(naziv.toUpperCase()) &&

@@ -99,7 +99,14 @@ Vue.component("prikaz-komentara", {
                 }
             }
             axios.post('/komentari/posalji/' + this.manifestacija.id, this.input)
-            window.location.reload();
+                .then(function (response) {
+                    if (response.data !== "Done") {
+                        alert(response.data);
+                    }
+                    else {
+                        window.location.reload();
+                    }
+                })
         }
     }
 

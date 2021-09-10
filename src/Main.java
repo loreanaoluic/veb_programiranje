@@ -574,6 +574,25 @@ public class Main {
         post("/komentari/posalji/:id", (req, res) -> {
             int manifestacija = Integer.parseInt(req.params("id"));
             var mapa = g.fromJson(req.body(), HashMap.class);
+
+            ZonedDateTime zdt1 = ZonedDateTime.of(manifestacijaDAO.findManifestacijaById(manifestacija).getDatumIVremeOdrzavanja(),
+                    ZoneId.systemDefault());
+            long datumManifestacije = zdt1.toInstant().toEpochMilli();
+
+            if (datumManifestacije > System.currentTimeMillis()) {
+                return "Manifestacija nije prošla!";
+            }
+
+            int counter = 0;
+            for (Karta k : kartaDAO.findKarteByKupac(ulogovanKupac.getKorisnickoIme())) {
+                if (k.getManifestacija() == manifestacija) {
+                    counter ++;
+                }
+            }
+            if (counter == 0) {
+                return "Nemate rezervisanih karata za ovu manifestaciju!";
+            }
+
             Random rand = new Random();
             Komentar komentar = new Komentar(rand.nextInt(1000), ulogovanKupac.getKorisnickoIme(), manifestacija,
                     String.valueOf(mapa.get("tekstKomentara")), Double.parseDouble(String.valueOf(mapa.get("ocena"))),

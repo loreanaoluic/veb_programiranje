@@ -62,7 +62,7 @@ Vue.component("pocetna-strana", {
 					<div class="card">
 						<div class="card-body">
 							  <div class="d-flex flex-column align-items-center text-center">
-							  <img  v-bind:src="manifestacija.poster" alt="Avatar" style="width:100%">
+							  <img  v-bind:src="manifestacija.poster" alt="Avatar" style="width:100%; height: 190px">
 							  <h4 class="d-flex align-items-center mb-3"> <b> {{ manifestacija.naziv }} </b></h4>
 							  <i class="material-icons text-info mr-2">{{ manifestacija.tipManifestacije }} </i>
 							  <br>

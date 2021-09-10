@@ -154,16 +154,22 @@ Vue.component("izmena-manifestacije", {
 
         let m = this.manifestacija.datumIVremeOdrzavanja.date.month.toString();
         let d = this.manifestacija.datumIVremeOdrzavanja.date.day.toString();
+        let h = this.manifestacija.datumIVremeOdrzavanja.time.hour.toString();
+        let mi = this.manifestacija.datumIVremeOdrzavanja.time.minute.toString();
         if (m.length === 1) {
             m = "0" + m;
         }
         if (d.length === 1) {
             d = "0" + d;
         }
+        if (h.length === 1) {
+            h = "0" + h;
+        }
+        if (mi.length === 1) {
+            mi = "0" + mi;
+        }
         this.input.datumIVremeOdrzavanja = this.manifestacija.datumIVremeOdrzavanja.date.year + "-" +
-            m + "-" + d + "T" +
-            this.manifestacija.datumIVremeOdrzavanja.time.hour + ":" +
-            this.manifestacija.datumIVremeOdrzavanja.time.minute;
+            m + "-" + d + "T" + h + ":" + mi;
 
         this.input.brojMesta = this.manifestacija.brojMesta;
         this.input.adresa = this.lokacija.adresa;

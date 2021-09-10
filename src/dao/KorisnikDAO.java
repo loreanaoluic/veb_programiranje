@@ -64,7 +64,7 @@ public class KorisnikDAO {
                     ArrayList<Integer> manifestacije = new ArrayList<>();
                     ArrayList<String> karte = new ArrayList<>();
 
-                    if (korisnik.length > 10) {
+                    if (korisnik.length > 9) {
                         if (korisnik[9].contains(" ")) {
                             String[] nizManifestacija = korisnik[9].split(" ");
                             for (String manifestacija : nizManifestacija) {
@@ -73,7 +73,9 @@ public class KorisnikDAO {
                         } else {
                             manifestacije.add(Integer.parseInt(korisnik[9]));
                         }
+                    }
 
+                    if (korisnik.length > 10) {
                         if (korisnik[10].contains(" ")) {
                             String[] nizKarata = korisnik[10].split(" ");
                             karte.addAll(Arrays.asList(nizKarata));
