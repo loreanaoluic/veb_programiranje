@@ -56,6 +56,9 @@ Shopping cart:
 Reserved tickets:
 ![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/tickets_buyer.png)
 
+Post comment:
+![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/post_comment_buyer.png)
+
 Profile page:
 ![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/profile_buyer.png)
 
@@ -68,6 +71,8 @@ New manifestation:
 ![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/new_manifestation_seller_1.png)
 ![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/new_manifestation_seller_2.png)
 
+Comments:
+![Home](https://github.com/loreanaoluic/veb_programiranje/blob/main/static/images/screenshots/comments_seller.png)
 
 
 <!-- RUNNING THE APPLICATION -->
